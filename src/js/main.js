@@ -10,6 +10,8 @@ async function fetchAndReturnObject(url) {
   return await response.json();
 }
 
+module.exports = fetchAndReturnObject; //ta bort sen
+
 //Lägg till parametrar för hur många items och från vilket item den ska börja
 function insertElements(array) {
   let cardContainer = document.querySelector(".card-container");
