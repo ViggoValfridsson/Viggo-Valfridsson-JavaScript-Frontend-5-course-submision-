@@ -44,6 +44,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   select {
     background-color: c.$item-background;
     border: 1px solid c.$border-color;
@@ -52,7 +53,11 @@ body {
     height: 2.5rem;
     width: 9rem;
     padding: 0 0.5rem;
-    margin: 0 1rem; 
+  }
+  .filters {
+    :nth-child(2) {
+      margin: 0 2rem; 
+    }
   }
   input {
     background-color: c.$item-background;
@@ -62,7 +67,7 @@ body {
     height: 2.5rem;
     width: 18rem;
     padding: 0 0.5rem;
-    margin: 0 1rem; 
+    margin: 0 2rem; 
   }
 }
 
