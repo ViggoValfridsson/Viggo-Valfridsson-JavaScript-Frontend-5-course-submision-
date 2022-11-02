@@ -1,2 +1,73 @@
-@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+@use "../../node_modules/bootstrap/scss/bootstrap.scss";
+@use "base/typography";
+@use "abstracts/colors.scss" as c;
+@use "components/cards";
+
+header {
+  background-color: c.$dark-page-background;
+  border-bottom: 1px solid c.$border-color;
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 6rem;
+  }
+  h1 {
+    width: 30%;
+    color: c.$text-color;
+  }
+  button {
+    background: none;
+    border: none;
+    height: 100%;
+    width: 6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      background-color: c.$dark-page-background-hover;
+    }
+  }
+  i {
+    color: c.$text-color;
+    font-size: 3rem;
+  }
+}
+
+body {
+  background-color: c.$lighter-page-background;
+}
+
+.sort-settings {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  select {
+    background-color: c.$item-background;
+    border: 1px solid c.$border-color;
+    color: c.$text-color;
+    border-radius: 10px;
+    height: 2.5rem;
+    width: 9rem;
+    padding: 0 0.5rem;
+  }
+  .filters {
+    :nth-child(2) {
+      margin: 0 2rem; 
+    }
+  }
+  input {
+    background-color: c.$item-background;
+    border: 1px solid c.$border-color;
+    color: c.$text-color;
+    border-radius: 10px;
+    height: 2.5rem;
+    width: 18rem;
+    padding: 0 0.5rem;
+    margin: 0 2rem; 
+  }
+}
 

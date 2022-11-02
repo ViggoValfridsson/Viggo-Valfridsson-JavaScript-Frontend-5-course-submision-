@@ -1,13 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="scss/main.scss">
-</head>
-<body>
-  <script type="module" src="js/main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="scss/main.scss" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container-xxl">
+        <h1>Viggos Ölsida</h1>
+        <button title="favorite-list" type="button" id="favorite-list">
+          <i class="bi bi-basket"></i>
+        </button>
+      </div>
+    </header>
+    <div class="sort-settings container-xxl">
+      <div class="filters">
+        <select title="amount-of-items" name="amount" id="amount">
+          <option selected disabled value="12">Amount</option>
+          <option value="12">Show 12</option>
+          <option value="24">Show 24</option>
+          <option value="All">Show all</option>
+        </select>
+        <select title="filter-by-malt" name="filter-by-malt" id="filter-by-malt">
+          <option selected disabled value="All">Malt</option>
+          <!--Add rest of hops later-->
+        </select>
+      </div>
+      <div class="search-and-sort">
+        <input title="search-by-name" placeholder="Search by name..." type="text" />
+        <select name="sort-by" title="sort-by" id="sort-by">
+          <option selected disabled value="12">Sort</option>
+          <option value="12">A-Z</option>
+          <option value="24">Z-A</option>
+        </select>
+      </div>
+    </div>
+    <main>
+      <div class="container-xxl öl-container">
+       
+      </div>
+    </main>
+    <script type="module" src="js/main.js"></script>
+  </body>
 </html>

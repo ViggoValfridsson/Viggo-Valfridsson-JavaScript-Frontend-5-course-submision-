@@ -1,0 +1,30 @@
+@use "../abstracts/colors" as c;
+
+.card {
+  width: 18rem;
+  background-color: c.$item-background;
+  color: c.$text-color;
+  padding-top: 1rem;
+  border-radius: 10px;
+  border: 1px solid c.$border-color;
+  .img-wrapper {
+    height: 14rem;
+    margin: 0 1rem;
+    overflow: hidden;
+  }
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  .card-title {
+    text-align: center;
+  }
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  .btn {
+    background-color: c.$button-color;
+    color: c.$text-color;
+  }
+}
