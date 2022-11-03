@@ -1,5 +1,9 @@
 "use strict";
+
+let beerObjects;
+
 fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
+  beerObjects = response;
   insertElements(response, 12, 1);
 });
 
@@ -98,7 +102,5 @@ let maltFilter = document.querySelector("#filter-by-malt").value;
 
 //Gör så att den här  inte anropar fetchen utan använder det tidigare resultatet
 amountOfItems.addEventListener("change", () => {
-  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
-    insertElements(response, amountOfItems.value, 1);
-  });
+  insertElements(beerObjects, amountOfItems.value, 1);
 });
