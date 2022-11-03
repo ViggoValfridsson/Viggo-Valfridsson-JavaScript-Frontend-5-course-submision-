@@ -1,13 +1,25 @@
 "use strict";
-fetchAndReturnObject("https://api.punkapi.com/v2/beers").then((response) => {
+fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
   insertElements(response, 12, 1);
 });
 
 //lägg till felhantering!
 //fetchar och retunerar json objekt
 async function fetchAndReturnObject(url) {
-  let response = await fetch(url);
-  return await response.json();
+  let completeArray = [];
+  let moreObjectsStillExist = true;
+  let i = 1;
+  while (moreObjectsStillExist) {
+    let response = await fetch(url + i);
+    let json = await response.json();
+    if (json.length == 0) {
+      moreObjectsStillExist = false;
+    }
+    completeArray = completeArray.concat(json);
+    i++;
+  }
+  console.log(completeArray);
+  return completeArray;
 }
 
 //Lägg till parametrar för hur många items och från vilket item den ska börja
@@ -27,9 +39,6 @@ function insertElements(array, amount, page) {
   cardContainer.innerHTML = "";
 
   for (i; i < loopLength; i++) {
-    if (array[i] === undefined) {
-      continue; //kolla om det här är nödvändigt
-    }
     let beerImageSource = array[i].image_url;
     let beerName = array[i].name;
     let tagline = array[i].tagline;
@@ -87,8 +96,9 @@ function insertElements(array, amount, page) {
 let amountOfItems = document.querySelector("#amount");
 let maltFilter = document.querySelector("#filter-by-malt").value;
 
+//Gör så att den här  inte anropar fetchen utan använder det tidigare resultatet
 amountOfItems.addEventListener("change", () => {
-  fetchAndReturnObject("https://api.punkapi.com/v2/beers").then((response) => {
+  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
     insertElements(response, amountOfItems.value, 1);
   });
 });
