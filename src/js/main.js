@@ -9,6 +9,7 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then(
 
 //lägg till felhantering!
 //fetchar och retunerar json objekt
+//funktionen gör oändliga request på 404. T.ex om man söker på något som inte finns
 async function fetchAndReturnObject(url) {
   let completeArray = [];
   let moreObjectsStillExist = true;
@@ -32,6 +33,16 @@ async function fetchAndReturnObject(url) {
 //lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
+
+  if (array.length === 0) {
+    cardContainer.innerHTML = `
+    <div class="error">
+      <h2>We could not find any beers matching your request</h2>
+      <p>Check if your spelling is correct. If you believe this is an error feel free to contact us.</p>
+    </div>`;
+    return;
+  }
+
   amount = +amount;
   let i = amount * (page - 1);
   let loopLength = amount + i;
@@ -98,9 +109,9 @@ function insertElements(array, amount, page) {
   cardContainer.innerHTML += buttonString;
 }
 
+let sortForm = document.querySelector(".sort-settings");
 let amountOfItems = document.querySelector("#amount");
 let maltFilter = document.querySelector("#filter-by-malt");
-let searchInput = document.querySelector("#search-by-name");
 
 amountOfItems.addEventListener("change", () => {
   insertElements(beerObjects, amountOfItems.value, 1);
@@ -108,7 +119,6 @@ amountOfItems.addEventListener("change", () => {
 
 maltFilter.addEventListener("change", () => {
   if (maltFilter.value === "All" || maltFilter.value === undefined) {
-    console.log("value all");
     fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
       beerObjects = response;
       insertElements(response, amountOfItems.value, 1);
@@ -123,7 +133,18 @@ maltFilter.addEventListener("change", () => {
   }
 });
 
-searchInput.addEventListener("submit", (event) => {
-  event.preventDefault;
-  console.log(searchInput.value);
+sortForm.addEventListener("submit", (e) => {
+  let searchInput = document.querySelector("#search-by-name");
+
+  if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
+    e.preventDefault();
+    
+    let searchInputFormatted = searchInput.value.replace(/\s/g, "_");
+    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`).then(
+      (response) => {
+        beerObjects = response;
+        insertElements(beerObjects, amountOfItems.value, 1);
+      }
+    );
+  } 
 });

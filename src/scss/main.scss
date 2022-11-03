@@ -75,6 +75,9 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  .error {
+    color: c.$text-color;
+  }
 }
 
 .page-buttons {
