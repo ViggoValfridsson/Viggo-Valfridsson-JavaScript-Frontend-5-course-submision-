@@ -21,11 +21,30 @@ async function fetchAndReturnObject(url) {
       moreObjectsStillExist = false;
     }
     completeArray = completeArray.concat(json);
+    addDateToObjects(completeArray);
     i++;
   }
-  console.log("length: " + completeArray.length);
-  console.log(completeArray);
+  // console.log("length: " + completeArray.length);
+  // console.log(completeArray);
   return completeArray;
+}
+
+function addDateToObjects(beerObjects) {
+  for (let i = 0; i < beerObjects.length; i++) {
+    let beerDateString = beerObjects[i].first_brewed;
+    let dateObject = new Date();
+
+    if (beerDateString.length === 7) {
+      let yearString = beerDateString.slice(3, 9);
+      let monthString = beerDateString.slice(0, 2);
+      dateObject.setFullYear(+yearString, +monthString - 1, 1);
+    }
+    if (beerDateString.length === 4) {
+      let yearString = beerDateString.slice(0, 5);
+      dateObject.setFullYear(+yearString, 11, 31);
+    }
+    beerObjects[i].date = dateObject;
+  }
 }
 
 //Lägg till parametrar för hur många items och från vilket item den ska börja
@@ -139,7 +158,7 @@ sortForm.addEventListener("submit", (e) => {
 
   if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
     e.preventDefault();
-    
+
     let searchInputFormatted = searchInput.value.replace(/\s/g, "_");
     fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`).then(
       (response) => {
@@ -147,13 +166,47 @@ sortForm.addEventListener("submit", (e) => {
         insertElements(beerObjects, amountOfItems.value, 1);
       }
     );
-  } 
+  }
 });
 
 sortOptions.addEventListener("input", () => {
-  console.log(sortOptions.value);
   //funktion med en switch case. Beroende på switch case sortera
   //beerObjects arrayen på olika sätt.
   //behöver lista ut hur man sorterar från object properties
+  switch (sortOptions.value) {
+    case "A-Z":
+      arraySortAlphabet();
+      insertElements(beerObjects, amountOfItems.value, 1);
+      break;
+    case "Z-A":
+      arraySortReverseAlphabet();
+      insertElements(beerObjects, amountOfItems.value, 1);
+      break;
+    case "Newest":
+      arraySortByNew();
+      insertElements(beerObjects, amountOfItems.value, 1);
+      break;
+    case "Oldest":
+      arraySortByOldest();
+      insertElements(beerObjects, amountOfItems.value, 1);
+      break;
+  }
 });
-console.log("loaded" + sortOptions.value)
+
+//Sorterar array efter objekt name property bokstavsordning
+function arraySortAlphabet() {
+  beerObjects.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+}
+
+//Sorterar array efter objekt name property baklänges bokstavsordning
+function  arraySortReverseAlphabet() {
+  beerObjects.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
+}
+
+function arraySortByNew() {
+  beerObjects.sort((a, b) => (a.date < b.date ? 1 : b.date > a.date ? -1 : 0));
+}
+
+function arraySortByOldest() {
+  beerObjects.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
+}
