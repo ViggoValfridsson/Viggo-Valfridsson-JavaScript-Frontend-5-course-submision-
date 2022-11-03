@@ -22,6 +22,7 @@ async function fetchAndReturnObject(url) {
     completeArray = completeArray.concat(json);
     i++;
   }
+  console.log("length: " + completeArray.length);
   console.log(completeArray);
   return completeArray;
 }
@@ -31,11 +32,7 @@ async function fetchAndReturnObject(url) {
 //lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
-  if (isNaN(amount)) {
-    amount = array.length;
-  } else {
-    amount = +amount;
-  }
+  amount = +amount;
   let i = amount * (page - 1);
   let loopLength = amount + i;
   let amountOfPages = Math.ceil(array.length / amount);
@@ -43,6 +40,9 @@ function insertElements(array, amount, page) {
   cardContainer.innerHTML = "";
 
   for (i; i < loopLength; i++) {
+    if (array[i] === undefined) {
+      continue;
+    }
     let beerImageSource = array[i].image_url;
     let beerName = array[i].name;
     let tagline = array[i].tagline;
@@ -77,12 +77,13 @@ function insertElements(array, amount, page) {
           </ul>
           <p class="description">${beerDescription}</p>
             <div class="button-wrapper">
-              <button type="button" class="btn">Add to favorites</button>
+              <button type="button" class="btn button-favorites">Add to favorites</button>
             </div>
         </div>
       </div>
     `;
   }
+
   let buttonString = `<div class="page-buttons">
   <button title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
   for (let i = 1; i <= amountOfPages; i++) {
@@ -98,9 +99,31 @@ function insertElements(array, amount, page) {
 }
 
 let amountOfItems = document.querySelector("#amount");
-let maltFilter = document.querySelector("#filter-by-malt").value;
+let maltFilter = document.querySelector("#filter-by-malt");
+let searchInput = document.querySelector("#search-by-name");
 
-//Gör så att den här  inte anropar fetchen utan använder det tidigare resultatet
 amountOfItems.addEventListener("change", () => {
   insertElements(beerObjects, amountOfItems.value, 1);
+});
+
+maltFilter.addEventListener("change", () => {
+  if (maltFilter.value === "All" || maltFilter.value === undefined) {
+    console.log("value all");
+    fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
+      beerObjects = response;
+      insertElements(response, amountOfItems.value, 1);
+    });
+  } else {
+    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?malt=${maltFilter.value}&per_page=80&page=`).then(
+      (response) => {
+        beerObjects = response;
+        insertElements(beerObjects, amountOfItems.value, 1);
+      }
+    );
+  }
+});
+
+searchInput.addEventListener("submit", (event) => {
+  event.preventDefault;
+  console.log(searchInput.value);
 });
