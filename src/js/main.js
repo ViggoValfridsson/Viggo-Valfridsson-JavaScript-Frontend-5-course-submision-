@@ -112,6 +112,7 @@ function insertElements(array, amount, page) {
 let sortForm = document.querySelector(".sort-settings");
 let amountOfItems = document.querySelector("#amount");
 let maltFilter = document.querySelector("#filter-by-malt");
+let sortOptions = document.querySelector("#sort-by");
 
 amountOfItems.addEventListener("change", () => {
   insertElements(beerObjects, amountOfItems.value, 1);
@@ -148,3 +149,11 @@ sortForm.addEventListener("submit", (e) => {
     );
   } 
 });
+
+sortOptions.addEventListener("input", () => {
+  console.log(sortOptions.value);
+  //funktion med en switch case. Beroende på switch case sortera
+  //beerObjects arrayen på olika sätt.
+  //behöver lista ut hur man sorterar från object properties
+});
+console.log("loaded" + sortOptions.value)
