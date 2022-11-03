@@ -1,4 +1,5 @@
 @use "../abstracts/colors" as c;
+@use "../abstracts/animations";
 
 .card {
   width: 18rem;
@@ -7,6 +8,7 @@
   padding-top: 1rem;
   border-radius: 10px;
   border: 1px solid c.$border-color;
+  @include animations.grow-middle;
   .img-wrapper {
     height: 14rem;
     margin: 0 1rem;
@@ -26,5 +28,8 @@
   .btn {
     background-color: c.$button-color;
     color: c.$text-color;
+    &:hover {
+      background-color: c.$button-color-hover;
+    }
   }
 }
