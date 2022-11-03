@@ -1,0 +1,26 @@
+@mixin grow-middle {
+  animation: grow-middle 0.3s;
+  animation-timing-function: ease-out;
+  @keyframes grow-middle {
+    0% {
+      transform: scale(0);
+      opacity: 10%;
+    }
+    25% {
+      transform: scale(0.25);
+      opacity: 15%;
+    }
+    50% {
+      transform: scale(0.5);
+      opacity: 40%;
+    }
+    75% {
+      transform: scale(0.75);
+      opacity: 75%;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 100%;
+    }
+  }
+}
