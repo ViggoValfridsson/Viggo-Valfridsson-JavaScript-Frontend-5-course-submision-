@@ -52,7 +52,6 @@ function addDateToObjects(beerObjects) {
 //lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
-
   if (array.length === 0) {
     cardContainer.innerHTML = `
     <div class="error">
@@ -155,7 +154,7 @@ amountOfItems.addEventListener("change", () => {
 maltFilter.addEventListener("change", () => {
   const text = "Sort";
   const options = Array.from(sortOptions.options);
-  const optionToSelect = options.find(item => item.text === text);
+  const optionToSelect = options.find((item) => item.text === text);
   optionToSelect.selected = true;
 
   if (maltFilter.value === "All" || maltFilter.value === undefined) {
@@ -235,14 +234,6 @@ function changePage(button) {
   let pageToSwitch = button.getAttribute("id");
   pageToSwitch = pageToSwitch.replace(/\D/g, "");
 
-  //bläddrar inte alltid upp. behöver fixas
-  //prova att sätta en timeout och se om det löser problemet
-  
-  // setTimeout(function() {
-  //   window.scrollTo({ top: 0, behavior: "smooth" });
-  // }, 10);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
   insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
+  document.querySelector("#top").scrollIntoView();
 }
