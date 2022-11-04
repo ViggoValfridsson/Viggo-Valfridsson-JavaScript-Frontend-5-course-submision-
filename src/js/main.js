@@ -1,11 +1,6 @@
 "use strict";
 import { setCookie, getCookie, deleteCookie } from "./cookies";
 
-setCookie("Viggo", "Viggos värde", {secure: true, "max-age": 10, samesite: "lax"});
-console.log(getCookie("Viggo"));
-deleteCookie("Viggo");
-console.log(getCookie("Viggo"));
-
 let beerObjects;
 
 fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
@@ -139,7 +134,6 @@ function insertElements(array, amount, page) {
   cardContainer.innerHTML += buttonString;
 
   let pageButtonContainer = document.querySelector(".page-buttons");
-
   //kanske bättre att använde pointerdown
   pageButtonContainer.addEventListener("click", (event) => {
     let target = event.target.closest("button");
@@ -147,10 +141,41 @@ function insertElements(array, amount, page) {
     if (!target || !pageButtonContainer.contains(target)) {
       return;
     }
-
     changePage(target);
   });
 }
+
+let cardContainer = document.querySelector(".card-container");
+
+//deleteCookie("favoriteList");
+
+//creates cookie "favoriteList". Value is a string with id's separated by a comma
+//need to check if beer already exists and doesnt add it again.
+//needs to store cookie in a way that allows for indivudual deletions
+cardContainer.addEventListener("click", (event) => {
+  let target = event.target.closest(".button-favorites");
+
+  if (!target || !cardContainer.contains(target)) {
+    return;
+  }
+
+  // ta ut id från button #id.
+  let targetId = target.getAttribute("id");
+  targetId = targetId.replace(/\D/g, "");
+
+  //skapa cookie med id
+  let cookie = getCookie("favoriteList");
+
+  if (cookie) {
+    cookie += "," + targetId;
+  } else {
+    cookie = targetId;
+  }
+
+  setCookie("favoriteList", cookie, { secure: true, "max-age": 31536000, samesite: "lax" });
+
+  console.log(getCookie("favoriteList"));
+});
 
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
