@@ -1,4 +1,10 @@
 "use strict";
+import { setCookie, getCookie, deleteCookie } from "./cookies";
+
+setCookie("Viggo", "Viggos värde", {secure: true, "max-age": 10, samesite: "lax"});
+console.log(getCookie("Viggo"));
+deleteCookie("Viggo");
+console.log(getCookie("Viggo"));
 
 let beerObjects;
 
@@ -115,7 +121,7 @@ function insertElements(array, amount, page) {
     `;
   }
 
-  let backPageNumber = (page - 1) > 0 ? page - 1 : 1;
+  let backPageNumber = page - 1 > 0 ? page - 1 : 1;
   let highestAllowedPage;
   let buttonString = `<div class="page-buttons">
   <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
@@ -127,7 +133,7 @@ function insertElements(array, amount, page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
     }
   }
-  let forwardPageNumber = (page + 1) < highestAllowedPage ? page + 1 : highestAllowedPage;
+  let forwardPageNumber = page + 1 < highestAllowedPage ? page + 1 : highestAllowedPage;
   buttonString += `<button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
