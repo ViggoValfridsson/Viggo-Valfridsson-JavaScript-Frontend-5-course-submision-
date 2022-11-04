@@ -19,13 +19,13 @@
     </header>
     <form class="sort-settings container-xxl">
       <div class="filters">
-        <select title="amount-of-items" name="amount" id="amount">
+        <select title="amount-of-items" name="amount" id="amount" autocomplete="off">
           <option selected disabled value="12">Items/Page</option>
           <option value="12">Show 12</option>
           <option value="24">Show 24</option>
           <option value="48">Show 48</option>
         </select>
-        <select title="filter-by-malt" name="filter-by-malt" id="filter-by-malt">
+        <select title="filter-by-malt" name="filter-by-malt" id="filter-by-malt" autocomplete="off">
           <option selected disabled value="All">Malt</option>
           <option value="All">All</option>
           <option value="Acidulated_Malt">Acidulated Malt</option>
@@ -61,8 +61,8 @@
         </select>
       </div>
       <div class="search-and-sort">
-        <input id="search-by-name" title="search-by-name" placeholder="Search by name..." type="text" />
-        <select name="sort-by" title="sort-by" id="sort-by">
+        <input id="search-by-name" title="search-by-name" placeholder="Search by name..." type="text" autocomplete="off"/>
+        <select name="sort-by" title="sort-by" id="sort-by" autocomplete="off">
           <option selected disabled value="undefined">Sort</option>
           <option value="A-Z">A-Z</option>
           <option value="Z-A">Z-A</option>

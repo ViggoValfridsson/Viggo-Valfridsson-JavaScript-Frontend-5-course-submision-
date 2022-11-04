@@ -73,15 +73,17 @@ function insertElements(array, amount, page) {
     if (array[i] === undefined) {
       continue;
     }
-    let beerImageSource = array[i].image_url;
-    let beerName = array[i].name;
-    let tagline = array[i].tagline;
-    let beerDate = array[i].first_brewed;
-    let alcoholContent = array[i].abv + "%";
-    let ibu = array[i].ibu ? array[i].ibu : "Unknown";
-    let beerDescription = array[i].description;
-    let maltArray = array[i].ingredients.malt;
+    let beer = array[i];
+    let beerImageSource = beer.image_url;
+    let beerName = beer.name;
+    let tagline = beer.tagline;
+    let beerDate = beer.first_brewed;
+    let alcoholContent = beer.abv + "%";
+    let ibu = beer.ibu ? beer.ibu : "Unknown";
+    let beerDescription = beer.description;
+    let maltArray = beer.ingredients.malt;
     let maltString = "";
+    let beerId = beer.id;
 
     for (let i = 0; i < maltArray.length; i++) {
       let name = maltArray[i].name;
@@ -107,7 +109,7 @@ function insertElements(array, amount, page) {
           </ul>
           <p class="description">${beerDescription}</p>
             <div class="button-wrapper">
-              <button type="button" class="btn button-favorites">Add to favorites</button>
+              <button id="favorite-${beerId}" type="button" class="btn button-favorites">Add to favorites</button>
             </div>
         </div>
       </div>
@@ -115,7 +117,7 @@ function insertElements(array, amount, page) {
   }
 
   let buttonString = `<div class="page-buttons">
-  <button title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
+  <button id="forward-${page - 1} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
@@ -123,21 +125,39 @@ function insertElements(array, amount, page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
     }
   }
-  buttonString += `   <button title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
+  buttonString += `<button id="forward-${page + 1}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
+
+  let pageButtonContainer = document.querySelector(".page-buttons");
+
+  //kanske bättre att använde pointerdown
+  pageButtonContainer.addEventListener("click", (event) => {
+    let target = event.target.closest("button");
+
+    if (!target || !pageButtonContainer.contains(target)) {
+      return;
+    }
+
+    changePage(target);
+  });
 }
 
-let sortForm = document.querySelector(".sort-settings");
-let amountOfItems = document.querySelector("#amount");
-let maltFilter = document.querySelector("#filter-by-malt");
-let sortOptions = document.querySelector("#sort-by");
+const sortForm = document.querySelector(".sort-settings");
+const amountOfItems = document.querySelector("#amount");
+const maltFilter = document.querySelector("#filter-by-malt");
+const sortOptions = document.querySelector("#sort-by");
 
 amountOfItems.addEventListener("change", () => {
   insertElements(beerObjects, amountOfItems.value, 1);
 });
 
 maltFilter.addEventListener("change", () => {
+  const text = "Sort";
+  const options = Array.from(sortOptions.options);
+  const optionToSelect = options.find(item => item.text === text);
+  optionToSelect.selected = true;
+
   if (maltFilter.value === "All" || maltFilter.value === undefined) {
     fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
       beerObjects = response;
@@ -169,7 +189,7 @@ sortForm.addEventListener("submit", (e) => {
   }
 });
 
-sortOptions.addEventListener("input", () => {
+sortOptions.addEventListener("change", () => {
   //funktion med en switch case. Beroende på switch case sortera
   //beerObjects arrayen på olika sätt.
   //behöver lista ut hur man sorterar från object properties
@@ -199,7 +219,7 @@ function arraySortAlphabet() {
 }
 
 //Sorterar array efter objekt name property baklänges bokstavsordning
-function  arraySortReverseAlphabet() {
+function arraySortReverseAlphabet() {
   beerObjects.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
 }
 
@@ -209,4 +229,20 @@ function arraySortByNew() {
 
 function arraySortByOldest() {
   beerObjects.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
+}
+
+function changePage(button) {
+  let pageToSwitch = button.getAttribute("id");
+  pageToSwitch = pageToSwitch.replace(/\D/g, "");
+
+  //bläddrar inte alltid upp. behöver fixas
+  //prova att sätta en timeout och se om det löser problemet
+  
+  // setTimeout(function() {
+  //   window.scrollTo({ top: 0, behavior: "smooth" });
+  // }, 10);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
 }
