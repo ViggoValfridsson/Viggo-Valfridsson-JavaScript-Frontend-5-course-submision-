@@ -126,18 +126,36 @@ function insertElements(array, amount, page) {
   buttonString += `   <button title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
+
+  let pageButtonContainer = document.querySelector(".page-buttons");
+
+  //kanske bättre att använde pointerdown
+  pageButtonContainer.addEventListener("click", (event) => {
+    let target = event.target.closest("button");
+
+    if (!target || !pageButtonContainer.contains(target)) {
+      return;
+    }
+
+    changePage(target);
+  });
 }
 
-let sortForm = document.querySelector(".sort-settings");
-let amountOfItems = document.querySelector("#amount");
-let maltFilter = document.querySelector("#filter-by-malt");
-let sortOptions = document.querySelector("#sort-by");
+const sortForm = document.querySelector(".sort-settings");
+const amountOfItems = document.querySelector("#amount");
+const maltFilter = document.querySelector("#filter-by-malt");
+const sortOptions = document.querySelector("#sort-by");
 
 amountOfItems.addEventListener("change", () => {
   insertElements(beerObjects, amountOfItems.value, 1);
 });
 
 maltFilter.addEventListener("change", () => {
+  const text = "Sort";
+  const options = Array.from(sortOptions.options);
+  const optionToSelect = options.find(item => item.text === text);
+  optionToSelect.selected = true;
+
   if (maltFilter.value === "All" || maltFilter.value === undefined) {
     fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
       beerObjects = response;
@@ -169,7 +187,7 @@ sortForm.addEventListener("submit", (e) => {
   }
 });
 
-sortOptions.addEventListener("input", () => {
+sortOptions.addEventListener("change", () => {
   //funktion med en switch case. Beroende på switch case sortera
   //beerObjects arrayen på olika sätt.
   //behöver lista ut hur man sorterar från object properties
@@ -199,7 +217,7 @@ function arraySortAlphabet() {
 }
 
 //Sorterar array efter objekt name property baklänges bokstavsordning
-function  arraySortReverseAlphabet() {
+function arraySortReverseAlphabet() {
   beerObjects.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
 }
 
@@ -209,4 +227,13 @@ function arraySortByNew() {
 
 function arraySortByOldest() {
   beerObjects.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
+}
+
+function changePage(button) {
+  let pageToSwitch = button.getAttribute("id");
+  pageToSwitch = pageToSwitch.replace(/\D/g, "");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
 }
