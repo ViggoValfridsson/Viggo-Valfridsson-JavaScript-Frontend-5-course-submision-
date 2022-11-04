@@ -52,7 +52,6 @@ function addDateToObjects(beerObjects) {
 //lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
-
   if (array.length === 0) {
     cardContainer.innerHTML = `
     <div class="error">
@@ -116,16 +115,20 @@ function insertElements(array, amount, page) {
     `;
   }
 
+  let backPageNumber = (page - 1) > 0 ? page - 1 : 1;
+  let highestAllowedPage;
   let buttonString = `<div class="page-buttons">
-  <button id="forward-${page - 1} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
+  <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
     } else {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
+      highestAllowedPage = i + 1;
     }
   }
-  buttonString += `<button id="forward-${page + 1}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
+  let forwardPageNumber = (page + 1) < highestAllowedPage ? page + 1 : highestAllowedPage;
+  buttonString += `<button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
 
@@ -155,7 +158,7 @@ amountOfItems.addEventListener("change", () => {
 maltFilter.addEventListener("change", () => {
   const text = "Sort";
   const options = Array.from(sortOptions.options);
-  const optionToSelect = options.find(item => item.text === text);
+  const optionToSelect = options.find((item) => item.text === text);
   optionToSelect.selected = true;
 
   if (maltFilter.value === "All" || maltFilter.value === undefined) {
@@ -235,14 +238,6 @@ function changePage(button) {
   let pageToSwitch = button.getAttribute("id");
   pageToSwitch = pageToSwitch.replace(/\D/g, "");
 
-  //bläddrar inte alltid upp. behöver fixas
-  //prova att sätta en timeout och se om det löser problemet
-  
-  // setTimeout(function() {
-  //   window.scrollTo({ top: 0, behavior: "smooth" });
-  // }, 10);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
   insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
+  document.querySelector("#top").scrollIntoView();
 }
