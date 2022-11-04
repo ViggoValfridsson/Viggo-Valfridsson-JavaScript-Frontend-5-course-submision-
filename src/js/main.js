@@ -173,10 +173,20 @@ cardContainer.addEventListener("click", (event) => {
   }
 
   setCookie("favoriteList", cookie, { secure: true, "max-age": 31536000, samesite: "lax" });
-
-  console.log(getCookie("favoriteList"));
 });
 
+const showListButton = document.querySelector("#favorite-list");
+
+showListButton.addEventListener("click", () => {
+
+  showModal();
+});
+
+//ändra till addModalContent
+function showModal() {
+
+  console.log(getCookie("favoriteList"));
+}
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
 const maltFilter = document.querySelector("#filter-by-malt");

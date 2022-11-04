@@ -9,10 +9,29 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
   </head>
   <body>
+
+    <div class="modal fade" id="favoriteModal" tabindex="-1" aria-labelledby="favoriteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="display-5" id="favoriteModalLabel">Favorite list</h1>
+            <button type="button" class="btn-close btn" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h2>You currently don't have any beers in your list.</h2>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn close-text" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn button-send-data">Send in your list for statistics</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <header id="top">
       <div class="container-xxl">
         <h1>Viggos Ölsida</h1>
-        <button title="favorite-list" type="button" id="favorite-list">
+        <button title="favorite-list" type="button" id="favorite-list" data-bs-toggle="modal" data-bs-target="#favoriteModal">
           <i class="bi bi-basket"></i>
         </button>
       </div>
@@ -81,5 +100,6 @@
       </div>
     </main>
     <script type="module" src="js/main.js"></script>
+    <script type="module" src="../node_modules/bootstrap/js/src/modal.js"></script>
   </body>
 </html>
