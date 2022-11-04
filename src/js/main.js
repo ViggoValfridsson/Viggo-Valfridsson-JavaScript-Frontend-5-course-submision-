@@ -127,8 +127,8 @@ function insertElements(array, amount, page) {
       highestAllowedPage = i + 1;
     }
   }
-  let forwardPage = (page + 1) < highestAllowedPage ? page + 1 : highestAllowedPage;
-  buttonString += `<button id="forward-${forwardPage}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
+  let forwardPageNumber = (page + 1) < highestAllowedPage ? page + 1 : highestAllowedPage;
+  buttonString += `<button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
 
