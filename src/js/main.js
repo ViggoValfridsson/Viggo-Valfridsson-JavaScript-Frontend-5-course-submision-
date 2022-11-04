@@ -240,8 +240,9 @@ function changePage(button) {
   
   // setTimeout(function() {
   //   window.scrollTo({ top: 0, behavior: "smooth" });
-  // }, 2000);
+  // }, 10);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
   insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
-  window.scrollTo({ top: 0, behavior: "smooth" });
 }
