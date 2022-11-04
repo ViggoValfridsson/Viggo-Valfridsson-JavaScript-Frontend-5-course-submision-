@@ -159,11 +159,11 @@ cardContainer.addEventListener("click", (event) => {
     return;
   }
 
-  // ta ut id från button #id.
+  // ta ut id från button #id attribut.
   let targetId = target.getAttribute("id");
   targetId = targetId.replace(/\D/g, "");
 
-  //skapa cookie med id
+  //ta in cookies nuvarnde värde
   let cookie = getCookie("favoriteList");
 
   if (cookie) {
@@ -209,10 +209,9 @@ maltFilter.addEventListener("change", () => {
 
 sortForm.addEventListener("submit", (e) => {
   let searchInput = document.querySelector("#search-by-name");
+  e.preventDefault();
 
   if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
-    e.preventDefault();
-
     let searchInputFormatted = searchInput.value.replace(/\s/g, "_");
     fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`).then(
       (response) => {
@@ -220,6 +219,8 @@ sortForm.addEventListener("submit", (e) => {
         insertElements(beerObjects, amountOfItems.value, 1);
       }
     );
+  } else {
+    window.location.reload();
   }
 });
 
