@@ -122,9 +122,9 @@ function insertElements(array, amount, page) {
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
+      highestAllowedPage = i;
     } else {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
-      highestAllowedPage = i + 1;
     }
   }
   let forwardPageNumber = (page + 1) < highestAllowedPage ? page + 1 : highestAllowedPage;
