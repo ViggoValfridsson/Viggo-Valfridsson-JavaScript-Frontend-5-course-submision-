@@ -73,15 +73,17 @@ function insertElements(array, amount, page) {
     if (array[i] === undefined) {
       continue;
     }
-    let beerImageSource = array[i].image_url;
-    let beerName = array[i].name;
-    let tagline = array[i].tagline;
-    let beerDate = array[i].first_brewed;
-    let alcoholContent = array[i].abv + "%";
-    let ibu = array[i].ibu ? array[i].ibu : "Unknown";
-    let beerDescription = array[i].description;
-    let maltArray = array[i].ingredients.malt;
+    let beer = array[i];
+    let beerImageSource = beer.image_url;
+    let beerName = beer.name;
+    let tagline = beer.tagline;
+    let beerDate = beer.first_brewed;
+    let alcoholContent = beer.abv + "%";
+    let ibu = beer.ibu ? beer.ibu : "Unknown";
+    let beerDescription = beer.description;
+    let maltArray = beer.ingredients.malt;
     let maltString = "";
+    let beerId = beer.id;
 
     for (let i = 0; i < maltArray.length; i++) {
       let name = maltArray[i].name;
@@ -107,7 +109,7 @@ function insertElements(array, amount, page) {
           </ul>
           <p class="description">${beerDescription}</p>
             <div class="button-wrapper">
-              <button type="button" class="btn button-favorites">Add to favorites</button>
+              <button id="favorite-${beerId}" type="button" class="btn button-favorites">Add to favorites</button>
             </div>
         </div>
       </div>
@@ -115,7 +117,7 @@ function insertElements(array, amount, page) {
   }
 
   let buttonString = `<div class="page-buttons">
-  <button title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
+  <button id="forward-${page - 1} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
@@ -123,7 +125,7 @@ function insertElements(array, amount, page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
     }
   }
-  buttonString += `   <button title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
+  buttonString += `<button id="forward-${page + 1}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
 
@@ -233,7 +235,13 @@ function changePage(button) {
   let pageToSwitch = button.getAttribute("id");
   pageToSwitch = pageToSwitch.replace(/\D/g, "");
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  //bläddrar inte alltid upp. behöver fixas
+  //prova att sätta en timeout och se om det löser problemet
+  
+  // setTimeout(function() {
+  //   window.scrollTo({ top: 0, behavior: "smooth" });
+  // }, 2000);
 
   insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
