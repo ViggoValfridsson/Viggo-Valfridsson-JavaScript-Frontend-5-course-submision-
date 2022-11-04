@@ -115,16 +115,20 @@ function insertElements(array, amount, page) {
     `;
   }
 
+  let backPageNumber = (page - 1) > 0 ? page - 1 : 1;
+  let highestAllowedPage;
   let buttonString = `<div class="page-buttons">
-  <button id="forward-${page - 1} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
+  <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
     } else {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
+      highestAllowedPage = i + 1;
     }
   }
-  buttonString += `<button id="forward-${page + 1}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
+  let forwardPage = (page + 1) < highestAllowedPage ? page + 1 : highestAllowedPage;
+  buttonString += `<button id="forward-${forwardPage}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
 
