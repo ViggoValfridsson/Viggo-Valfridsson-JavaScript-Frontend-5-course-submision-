@@ -178,37 +178,85 @@ cardContainer.addEventListener("click", (event) => {
 });
 
 const showListButton = document.querySelector("#favorite-list");
+const clearCookiesButton = document.querySelector("#clear-cookies-button");
 
 showListButton.addEventListener("click", () => {
   let favoriteBeers = findFavoriteBeers();
-  
   insertModalContent(favoriteBeers);
+});
+
+clearCookiesButton.addEventListener("click", () => {
+  deleteCookie("favoriteList");
+  insertModalContent();
 });
 
 function findFavoriteBeers() {
   let currentCookies = getCookie("favoriteList");
   let favoriteObjects = [];
-  
+
   if (!currentCookies) {
     return false;
   }
 
   currentCookies = currentCookies.split(",");
+  let removedDuplicateId = Array.from(new Set(currentCookies));
 
-  for (let i = 0; i < currentCookies.length; i++) {
-    favoriteObjects.push(unmodifiedBeerObjects.find((item) => item.id == currentCookies[i]));
-  }
-
-  //testa så det är rätt värden
-  for (let i = 0; i < favoriteObjects.length; i++) {
-    console.log(favoriteObjects[i]);
+  for (let i = 0; i < removedDuplicateId.length; i++) {
+    favoriteObjects.push(unmodifiedBeerObjects.find((item) => item.id == removedDuplicateId[i]));
   }
   return favoriteObjects;
 }
 
-function insertModalContent() {
+function insertModalContent(favoriteObjects) {
+  const modalBody = document.querySelector(".modal-body");
 
-  // console.log(getCookie("favoriteList"));
+  if (!favoriteObjects) {
+    modalBody.innerHTML = `
+    <h2 class="no-beer">You currently don't have any beers in your list.</h2>
+    <h3 class="lead">You can add beers by clicking the add to favorites button.</h3>
+  `;
+    return;
+  }
+
+  modalBody.innerHTML = "";
+
+  for (let i = 0; i < favoriteObjects.length; i++) {
+    let beer = favoriteObjects[i];
+    let ibu = beer.ibu ? beer.ibu : "Unknown";
+    let maltArray = beer.ingredients.malt;
+    let maltString = "";
+
+    for (let i = 0; i < maltArray.length; i++) {
+      let name = maltArray[i].name;
+      if (i != maltArray.length - 1) {
+        name += ", ";
+      }
+      maltString += name;
+    }
+
+    modalBody.innerHTML += `
+    <div class="list-beer">
+      <div class="img-wrapper">
+        <img src="${beer.image_url}" class="card-img-top" alt="A picture of ${beer.name}" />
+      </div>
+      <div class="beer-body">
+        <div class="header-div">
+          <h2 class="beer-title">${beer.name}</h2>
+          <button id="delete-beer-${beer.id}" type="button" class="delete-beer close-button">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <p class="tagline">${beer.tagline}</p>
+        <ul class="Info">
+          <li>${beer.first_brewed}</li>
+          <li>ABV: ${beer.abv + "%"}</li>
+          <li>IBU: ${ibu}</li>
+          <li>${maltString}</li>
+        </ul>
+        <p class="description">${beer.description}</p>
+      </div>
+    </div>`;
+  }
 }
 
 const sortForm = document.querySelector(".sort-settings");
