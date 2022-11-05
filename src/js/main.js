@@ -192,8 +192,11 @@ const showListButton = document.querySelector("#favorite-list");
 const clearCookiesButton = document.querySelector("#clear-cookies-button");
 
 showListButton.addEventListener("click", () => {
-  let favoriteBeers = findFavoriteBeers();
-  insertModalContent(favoriteBeers);
+  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
+    unmodifiedBeerObjects = response;
+    let favoriteBeers = findFavoriteBeers();
+    insertModalContent(favoriteBeers);
+  });
 });
 
 clearCookiesButton.addEventListener("click", () => {
@@ -210,10 +213,9 @@ function findFavoriteBeers() {
   }
 
   currentCookies = currentCookies.split(",");
-  let removedDuplicateId = Array.from(new Set(currentCookies));
 
-  for (let i = 0; i < removedDuplicateId.length; i++) {
-    favoriteObjects.push(unmodifiedBeerObjects.find((item) => item.id == removedDuplicateId[i]));
+  for (let i = 0; i < currentCookies.length; i++) {
+    favoriteObjects.push(unmodifiedBeerObjects.find((item) => item.id == currentCookies[i]));
   }
   return favoriteObjects;
 }
@@ -267,6 +269,36 @@ function insertModalContent(favoriteObjects) {
         <p class="description">${beer.description}</p>
       </div>
     </div>`;
+  }
+}
+
+let modalBody = document.querySelector(".modal-body");
+
+modalBody.addEventListener("click", (event) => {
+  let target = event.target.closest(".delete-beer");
+
+  if (!target) {
+    return;
+  }
+
+  deleteSpecificCookie(target);
+});
+
+function deleteSpecificCookie(target) {
+  let deleteId = target.getAttribute("id");
+  deleteId = deleteId.replace(/\D/g, "");
+
+  let currentCookies = getCookie("favoriteList");
+  currentCookies = currentCookies.split(",");
+  let newCookie = [];
+
+  for (let i = 0; i < currentCookies.length; i++) {
+    if (currentCookies[i].id != +deleteId) {
+      console.log(currentCookies[i]);
+      newCookie.push(currentCookies[i]);
+    } else {
+      console.log("removed: " + currentCookies[i]);
+    }
   }
 }
 
