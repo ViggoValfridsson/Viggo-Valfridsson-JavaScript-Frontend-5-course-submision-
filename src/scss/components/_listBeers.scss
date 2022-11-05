@@ -2,7 +2,7 @@
 
 .list-beer {
   width: 100%;
-  padding: 1rem 0;
+  padding: 1rem 0.7rem;
   display: flex;
   align-items: center;
   border-top: 1px solid c.$border-color;
@@ -19,9 +19,9 @@
   }
   .img-wrapper {
     max-height: 15rem;
-    width: 45%;
-    margin: 0 1rem;
-    overflow: hidden;
+    max-width: 25%;
+    min-width: 25%;
+    margin-right: 0.5rem;
     display: flex;
     justify-content: center;
   }
