@@ -2,9 +2,11 @@
 import { setCookie, getCookie, deleteCookie } from "./cookies";
 
 let beerObjects;
+let unmodifiedBeerObjects;
 
 fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
   beerObjects = response;
+  unmodifiedBeerObjects = response;
   insertElements(response, 12, 1);
 });
 
@@ -178,15 +180,37 @@ cardContainer.addEventListener("click", (event) => {
 const showListButton = document.querySelector("#favorite-list");
 
 showListButton.addEventListener("click", () => {
-
-  showModal();
+  let favoriteBeers = findFavoriteBeers();
+  
+  insertModalContent(favoriteBeers);
 });
 
-//ändra till addModalContent
-function showModal() {
+function findFavoriteBeers() {
+  let currentCookies = getCookie("favoriteList");
+  let favoriteObjects = [];
+  
+  if (!currentCookies) {
+    return false;
+  }
 
-  console.log(getCookie("favoriteList"));
+  currentCookies = currentCookies.split(",");
+
+  for (let i = 0; i < currentCookies.length; i++) {
+    favoriteObjects.push(unmodifiedBeerObjects.find((item) => item.id == currentCookies[i]));
+  }
+
+  //testa så det är rätt värden
+  for (let i = 0; i < favoriteObjects.length; i++) {
+    console.log(favoriteObjects[i]);
+  }
+  return favoriteObjects;
 }
+
+function insertModalContent() {
+
+  // console.log(getCookie("favoriteList"));
+}
+
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
 const maltFilter = document.querySelector("#filter-by-malt");

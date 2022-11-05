@@ -3,10 +3,14 @@
 @use "abstracts/colors.scss" as c;
 @use "components/cards";
 
-//fixa så x close knappen är vit.
 .modal-content {
   background-color: c.$item-background;
   color: c.$text-color;
+  border: 1px solid c.$border-color;
+  h2{
+    font-weight: 300;
+    font-size: 2rem;
+  }
   .close-text {
     background-color: c.$item-background;
     border: 1px solid c.$border-color;
@@ -14,6 +18,25 @@
     &:hover {
       background-color: rgba($color: #000000, $alpha: 0.5);
     }
+  }
+  .close-button {
+    background: none;
+    border: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    &:hover {
+      background-color: rgba($color: #000000, $alpha: 0.5);
+    }
+    i {
+      color: c.$text-color;
+      font-size: 1.5rem;
+    }
+  }
+  .modal-header {
+    border-bottom: 1px solid c.$border-color;
+  }
+  .modal-footer {
+    border-top: 1px solid c.$border-color;
   }
   .button-send-data {
     background-color: c.$button-color;
