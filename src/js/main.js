@@ -179,15 +179,13 @@ cardContainer.addEventListener("click", (event) => {
 });
 
 function buttonFlash(target) {
-  let oldText = target.innerHTML;
-
   target.classList.add("active-button");
   target.innerHTML = "&#10003 Added to favorites";
 
   setTimeout(() => {
     target.classList.remove("active-button");
-    target.innerHTML = oldText;
-  }, 1000);
+    target.innerHTML = "Add to favorites";
+  }, 1300);
 }
 
 const showListButton = document.querySelector("#favorite-list");
