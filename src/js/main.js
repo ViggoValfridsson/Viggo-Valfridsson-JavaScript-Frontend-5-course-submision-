@@ -183,7 +183,7 @@ function buttonFlash(target) {
   setTimeout(() => {
     target.classList.remove("active-button");
     target.innerHTML = "Add to favorites";
-  }, 1300);
+  }, 700);
 }
 
 const showListButton = document.querySelector("#favorite-list");
