@@ -2,11 +2,9 @@
 import { setCookie, getCookie, deleteCookie } from "./cookies";
 
 let beerObjects;
-let unmodifiedBeerObjects;
 
 fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
   beerObjects = response;
-  unmodifiedBeerObjects = response;
   insertElements(response, 12, 1);
 });
 
@@ -192,19 +190,29 @@ const showListButton = document.querySelector("#favorite-list");
 const clearCookiesButton = document.querySelector("#clear-cookies-button");
 
 showListButton.addEventListener("click", () => {
+  showModalSpinner();
   fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
-    unmodifiedBeerObjects = response;
-    let favoriteBeers = findFavoriteBeers();
+    let allBeerObjects = response;
+    let favoriteBeers = findFavoriteBeers(allBeerObjects);
     insertModalContent(favoriteBeers);
   });
 });
+
+function showModalSpinner() {
+  modalBody.innerHTML = `  
+  <div class="spinner-container">
+    <div class="spinner-border spinner-border-sm text-white" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>`;
+}
 
 clearCookiesButton.addEventListener("click", () => {
   deleteCookie("favoriteList");
   insertModalContent();
 });
 
-function findFavoriteBeers() {
+function findFavoriteBeers(allBeerObjects) {
   let currentCookies = getCookie("favoriteList");
   let favoriteObjects = [];
 
@@ -215,7 +223,7 @@ function findFavoriteBeers() {
   currentCookies = currentCookies.split(",");
 
   for (let i = 0; i < currentCookies.length; i++) {
-    favoriteObjects.push(unmodifiedBeerObjects.find((item) => item.id == currentCookies[i]));
+    favoriteObjects.push(allBeerObjects.find((item) => item.id == currentCookies[i]));
   }
   return favoriteObjects;
 }
@@ -293,13 +301,17 @@ function deleteSpecificCookie(target) {
   let newCookie = [];
 
   for (let i = 0; i < currentCookies.length; i++) {
-    if (currentCookies[i].id != +deleteId) {
-      console.log(currentCookies[i]);
+    if (currentCookies[i] != deleteId) {
       newCookie.push(currentCookies[i]);
-    } else {
-      console.log("removed: " + currentCookies[i]);
     }
   }
+  newCookie = newCookie.toString();
+  setCookie("favoriteList", newCookie, { secure: true, "max-age": 31536000, samesite: "lax" });
+  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
+    let allBeerObjects = response;
+    let favoriteBeers = findFavoriteBeers(allBeerObjects);
+    insertModalContent(favoriteBeers);
+  });
 }
 
 const sortForm = document.querySelector(".sort-settings");
