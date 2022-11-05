@@ -30,8 +30,15 @@
   .btn {
     background-color: c.$button-color;
     color: c.$text-color;
+    width: 11rem;
     &:hover {
       background-color: c.$button-color-hover;
+    }
+  }
+  .active-button {
+    background-color: c.$button-active;
+    &:hover {
+      background-color: c.$button-active;
     }
   }
 }

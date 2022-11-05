@@ -161,6 +161,7 @@ cardContainer.addEventListener("click", (event) => {
     return;
   }
 
+  buttonFlash(target);
   // ta ut id från button #id attribut.
   let targetId = target.getAttribute("id");
   targetId = targetId.replace(/\D/g, "");
@@ -176,6 +177,18 @@ cardContainer.addEventListener("click", (event) => {
 
   setCookie("favoriteList", cookie, { secure: true, "max-age": 31536000, samesite: "lax" });
 });
+
+function buttonFlash(target) {
+  let oldText = target.innerHTML;
+
+  target.classList.add("active-button");
+  target.innerHTML = "&#10003 Added to favorites";
+
+  setTimeout(() => {
+    target.classList.remove("active-button");
+    target.innerHTML = oldText;
+  }, 1000);
+}
 
 const showListButton = document.querySelector("#favorite-list");
 const clearCookiesButton = document.querySelector("#clear-cookies-button");
