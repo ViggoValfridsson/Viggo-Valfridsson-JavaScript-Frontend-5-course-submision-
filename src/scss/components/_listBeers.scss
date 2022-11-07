@@ -1,0 +1,31 @@
+@use "../abstracts/colors" as c;
+
+.list-beer {
+  width: 100%;
+  padding: 1rem 0.7rem;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid c.$border-color;
+  &:last-child {
+    border-bottom: 1px solid c.$border-color;
+  }
+  .header-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    button {
+      margin-right: 1rem;
+    }
+  }
+  .img-wrapper {
+    max-height: 15rem;
+    max-width: 25%;
+    min-width: 25%;
+    margin-right: 0.5rem;
+    display: flex;
+    justify-content: center;
+  }
+  img {
+    object-fit: contain;
+  }
+}

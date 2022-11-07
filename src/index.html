@@ -9,10 +9,40 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
   </head>
   <body>
+    <div class="modal fade" id="favoriteModal" tabindex="-1" aria-labelledby="favoriteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="display-5" id="favoriteModalLabel">Favorite list</h1>
+            <button type="button" class="close-button" data-bs-dismiss="modal" aria-label="Close">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="spinner-container">
+              <div class="spinner-border spinner-border-sm text-white" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn close-text" data-bs-dismiss="modal">Close</button>
+            <button id="clear-cookies-button" type="button" class="btn btn-danger ">Delete list</button>
+            <button type="button" class="btn button-send-data">Send in your list for statistics</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <header id="top">
       <div class="container-xxl">
         <h1>Viggos Ölsida</h1>
-        <button title="favorite-list" type="button" id="favorite-list">
+        <button
+          title="favorite-list"
+          type="button"
+          id="favorite-list"
+          data-bs-toggle="modal"
+          data-bs-target="#favoriteModal"
+        >
           <i class="bi bi-basket"></i>
         </button>
       </div>
@@ -61,7 +91,13 @@
         </select>
       </div>
       <div class="search-and-sort">
-        <input id="search-by-name" title="search-by-name" placeholder="Search by name..." type="text" autocomplete="off"/>
+        <input
+          id="search-by-name"
+          title="search-by-name"
+          placeholder="Search by name..."
+          type="text"
+          autocomplete="off"
+        />
         <select name="sort-by" title="sort-by" id="sort-by" autocomplete="off">
           <option selected disabled value="undefined">Sort</option>
           <option value="A-Z">A-Z</option>
@@ -81,5 +117,6 @@
       </div>
     </main>
     <script type="module" src="js/main.js"></script>
+    <script type="module" src="../node_modules/bootstrap/js/src/modal.js"></script>
   </body>
 </html>

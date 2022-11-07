@@ -1,4 +1,5 @@
 "use strict";
+import { setCookie, getCookie, deleteCookie } from "./cookies";
 
 let beerObjects;
 
@@ -115,7 +116,7 @@ function insertElements(array, amount, page) {
     `;
   }
 
-  let backPageNumber = (page - 1) > 0 ? page - 1 : 1;
+  let backPageNumber = page - 1 > 0 ? page - 1 : 1;
   let highestAllowedPage;
   let buttonString = `<div class="page-buttons">
   <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
@@ -127,13 +128,12 @@ function insertElements(array, amount, page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
     }
   }
-  let forwardPageNumber = (page + 1) < highestAllowedPage ? page + 1 : highestAllowedPage;
+  let forwardPageNumber = page + 1 < highestAllowedPage ? page + 1 : highestAllowedPage;
   buttonString += `<button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
 
   let pageButtonContainer = document.querySelector(".page-buttons");
-
   //kanske bättre att använde pointerdown
   pageButtonContainer.addEventListener("click", (event) => {
     let target = event.target.closest("button");
@@ -141,8 +141,176 @@ function insertElements(array, amount, page) {
     if (!target || !pageButtonContainer.contains(target)) {
       return;
     }
-
     changePage(target);
+  });
+}
+
+let cardContainer = document.querySelector(".card-container");
+
+//deleteCookie("favoriteList");
+
+//creates cookie "favoriteList". Value is a string with id's separated by a comma
+//need to check if beer already exists and doesnt add it again.
+//needs to store cookie in a way that allows for indivudual deletions
+cardContainer.addEventListener("click", (event) => {
+  let target = event.target.closest(".button-favorites");
+
+  if (!target || !cardContainer.contains(target)) {
+    return;
+  }
+
+  buttonFlash(target);
+  // ta ut id från button #id attribut.
+  let targetId = target.getAttribute("id");
+  targetId = targetId.replace(/\D/g, "");
+
+  //ta in cookies nuvarnde värde
+  let cookie = getCookie("favoriteList");
+
+  if (cookie) {
+    cookie += "," + targetId;
+  } else {
+    cookie = targetId;
+  }
+
+  setCookie("favoriteList", cookie, { secure: true, "max-age": 31536000, samesite: "lax" });
+});
+
+function buttonFlash(target) {
+  target.classList.add("active-button");
+  target.innerHTML = "&#10003 Added to favorites";
+
+  setTimeout(() => {
+    target.classList.remove("active-button");
+    target.innerHTML = "Add to favorites";
+  }, 700);
+}
+
+const showListButton = document.querySelector("#favorite-list");
+const clearCookiesButton = document.querySelector("#clear-cookies-button");
+
+showListButton.addEventListener("click", () => {
+  showModalSpinner();
+  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
+    let allBeerObjects = response;
+    let favoriteBeers = findFavoriteBeers(allBeerObjects);
+    insertModalContent(favoriteBeers);
+  });
+});
+
+function showModalSpinner() {
+  modalBody.innerHTML = `  
+  <div class="spinner-container">
+    <div class="spinner-border spinner-border-sm text-white" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>`;
+}
+
+clearCookiesButton.addEventListener("click", () => {
+  deleteCookie("favoriteList");
+  insertModalContent();
+});
+
+function findFavoriteBeers(allBeerObjects) {
+  let currentCookies = getCookie("favoriteList");
+  let favoriteObjects = [];
+
+  if (!currentCookies) {
+    return false;
+  }
+
+  currentCookies = currentCookies.split(",");
+
+  for (let i = 0; i < currentCookies.length; i++) {
+    favoriteObjects.push(allBeerObjects.find((item) => item.id == currentCookies[i]));
+  }
+  return favoriteObjects;
+}
+
+function insertModalContent(favoriteObjects) {
+  const modalBody = document.querySelector(".modal-body");
+
+  if (!favoriteObjects) {
+    modalBody.innerHTML = `
+    <h2 class="no-beer">You currently don't have any beers in your list.</h2>
+    <h3 class="lead">You can add beers by clicking the add to favorites button.</h3>
+  `;
+    return;
+  }
+
+  modalBody.innerHTML = "";
+
+  for (let i = 0; i < favoriteObjects.length; i++) {
+    let beer = favoriteObjects[i];
+    let ibu = beer.ibu ? beer.ibu : "Unknown";
+    let maltArray = beer.ingredients.malt;
+    let maltString = "";
+
+    for (let i = 0; i < maltArray.length; i++) {
+      let name = maltArray[i].name;
+      if (i != maltArray.length - 1) {
+        name += ", ";
+      }
+      maltString += name;
+    }
+
+    modalBody.innerHTML += `
+    <div class="list-beer">
+      <div class="img-wrapper">
+        <img src="${beer.image_url}" class="card-img-top" alt="A picture of ${beer.name}" />
+      </div>
+      <div class="beer-body">
+        <div class="header-div">
+          <h2 class="beer-title">${beer.name}</h2>
+          <button id="delete-beer-${beer.id}" type="button" class="delete-beer close-button">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <p class="tagline">${beer.tagline}</p>
+        <ul class="Info">
+          <li>${beer.first_brewed}</li>
+          <li>ABV: ${beer.abv + "%"}</li>
+          <li>IBU: ${ibu}</li>
+          <li>${maltString}</li>
+        </ul>
+        <p class="description">${beer.description}</p>
+      </div>
+    </div>`;
+  }
+}
+
+let modalBody = document.querySelector(".modal-body");
+
+modalBody.addEventListener("click", (event) => {
+  let target = event.target.closest(".delete-beer");
+
+  if (!target) {
+    return;
+  }
+
+  deleteSpecificCookie(target);
+});
+
+function deleteSpecificCookie(target) {
+  let deleteId = target.getAttribute("id");
+  deleteId = deleteId.replace(/\D/g, "");
+
+  let currentCookies = getCookie("favoriteList");
+  currentCookies = currentCookies.split(",");
+  let newCookie = [];
+
+  for (let i = 0; i < currentCookies.length; i++) {
+    if (currentCookies[i] != deleteId) {
+      newCookie.push(currentCookies[i]);
+    }
+  }
+  newCookie = newCookie.toString();
+  setCookie("favoriteList", newCookie, { secure: true, "max-age": 31536000, samesite: "lax" });
+  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
+    let allBeerObjects = response;
+    let favoriteBeers = findFavoriteBeers(allBeerObjects);
+    insertModalContent(favoriteBeers);
   });
 }
 
@@ -178,10 +346,9 @@ maltFilter.addEventListener("change", () => {
 
 sortForm.addEventListener("submit", (e) => {
   let searchInput = document.querySelector("#search-by-name");
+  e.preventDefault();
 
   if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
-    e.preventDefault();
-
     let searchInputFormatted = searchInput.value.replace(/\s/g, "_");
     fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`).then(
       (response) => {
@@ -189,6 +356,8 @@ sortForm.addEventListener("submit", (e) => {
         insertElements(beerObjects, amountOfItems.value, 1);
       }
     );
+  } else {
+    window.location.reload();
   }
 });
 
