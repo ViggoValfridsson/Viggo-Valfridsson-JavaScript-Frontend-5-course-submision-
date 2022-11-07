@@ -314,6 +314,34 @@ function deleteSpecificCookie(target) {
   });
 }
 
+const sendDataModal = document.querySelector("#submit-modal");
+
+sendDataModal.addEventListener("click", (event) => {
+  const target = event.target.closest(".fetch-button");
+
+  if (!target) {
+    console.log("return");
+    return;
+  }
+
+  let targetId = target.getAttribute("id");
+
+  switch(targetId) {
+    case "fetch-post-button":
+      console.log("post");
+      break;
+    case "fetch-get-button":
+      console.log("get");
+      break;
+    case "fetch-put-button":
+      console.log("put");
+      break;
+    case "fetch-delete-button":
+      console.log("delete");
+      break;
+  }
+});
+
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
 const maltFilter = document.querySelector("#filter-by-malt");
