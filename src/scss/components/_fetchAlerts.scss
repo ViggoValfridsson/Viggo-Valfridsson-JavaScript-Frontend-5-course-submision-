@@ -1,0 +1,24 @@
+@use "../abstracts/colors.scss" as c;
+
+.fetch-alert {
+  position: fixed;
+  color: c.$text-color;
+  border: 1px solid c.$border-color;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.3rem 0.3rem;
+  border-radius: 10px;
+  h4 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+}
+
+#confirmation-div {
+  background-color: c.$button-color;
+}
+
+#fetch-fail-div {
+  background-color: c.$red-button;
+}

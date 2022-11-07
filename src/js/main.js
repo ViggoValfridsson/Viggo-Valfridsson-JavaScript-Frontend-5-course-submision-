@@ -318,9 +318,12 @@ const sendDataModal = document.querySelector("#submit-modal");
 
 sendDataModal.addEventListener("click", (event) => {
   const target = event.target.closest(".fetch-button");
+  let postIcon = `<i class="bi bi-send"></i>`;
+  let getIcon = `<i class="bi bi-file-arrow-down"></i>`;
+  let putIcon = `<i class="bi bi-arrow-clockwise"></i>`;
+  let deleteIcon = `<i class="bi bi-trash3"></i>`;
 
   if (!target) {
-    console.log("return");
     return;
   }
 
@@ -328,7 +331,7 @@ sendDataModal.addEventListener("click", (event) => {
 
   switch (targetId) {
     case "fetch-post-button":
-      postFavoriteList();
+      postFavoriteList(target, postIcon);
       break;
     case "fetch-get-button":
       console.log("get");
@@ -342,37 +345,67 @@ sendDataModal.addEventListener("click", (event) => {
   }
 });
 
-async function postFavoriteList() {
+async function postFavoriteList(target, icon) {
+  // if (target.innerHTML != icon) {
+  //   return;
+  // }
+  insertButtonSpinner(target);
   try {
     const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
     let favoriteBeers = findFavoriteBeers(response);
 
-    await fetch("https://jsonplaceholder.typicode.com/posts", {
+    await fetch("https://jsosnplaceholder.typicode.com/posts", {
       method: "POST",
       body: JSON.stringify(favoriteBeers),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     });
-  
+    target.innerHTML = "&#10003";
     
-    showFetchConfirmation();
+    showFetchConfirmation("Succesfully sent list", target.getAttribute("id"), icon);
   } catch (err) {
-    showFetchFailure(err);
+    target.innerHTML = `<i class="bi bi-exclamation-triangle"></i>`;
+    target.classList.add("failed");
+    showFetchFailure(err, target.getAttribute("id"), icon);
   }
 }
 
-function showFetchConfirmation() {
-  console.log("success");
-  let confirmationDiv = document.createElement("div");
-  confirmationDiv.classList.add("confirmation-div");
-  document.body.append(confirmationDiv);
-
-  //timeout funktion som raderar diven
+function insertButtonSpinner(target) {
+  target.innerHTML = `  
+  <div class="spinner-container">
+    <div class="spinner-border spinner-border-sm text-white" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>`;
 }
 
-function showFetchFailure(err) {
-  console.log(err);
+function showFetchConfirmation(message, targetId, icon) {
+  sendDataModal.innerHTML += `
+  <div id="confirmation-div" class="fetch-alert">
+    <h4>${message}</h4>
+  </div>
+  `;
+
+  setTimeout(() => {
+    document.querySelector(".fetch-alert").remove();
+    document.querySelector(`#${targetId}`).innerHTML = icon;
+  }, 1500);
+}
+
+function showFetchFailure(err, targetId, icon) {
+  sendDataModal.innerHTML += `
+  <div id="fetch-fail-div" class="fetch-alert">
+    <h4>${err}</h4>
+    <p class="lead">Please try again</p>
+  </div>
+  `;
+  setTimeout(() => {
+    document.querySelector(".fetch-alert").remove();
+    let target = document.querySelector(`#${targetId}`);
+    target.classList.remove("failed");
+    target.innerHTML = icon;
+  }, 1500);
 }
 
 
