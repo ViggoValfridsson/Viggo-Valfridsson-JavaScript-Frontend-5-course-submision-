@@ -343,7 +343,7 @@ sendDataModal.addEventListener("click", (event) => {
       putFavoriteList(target, putIcon);
       break;
     case "fetch-delete-button":
-      console.log("delete");
+      deleteFavoriteList(target, deleteIcon);
       break;
   }
 });
@@ -354,7 +354,11 @@ async function postFavoriteList(target, icon) {
     const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
     let favoriteBeers = findFavoriteBeers(response);
 
-    await fetch("https://jsonplaceholder.typicode.com/posts", {
+    if (!favoriteBeers) {
+      throw new Error("List is empty. You have to add items before sending.");
+    }
+
+    const post = await fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "POST",
       body: JSON.stringify(favoriteBeers),
       headers: {
@@ -362,6 +366,9 @@ async function postFavoriteList(target, icon) {
       },
     });
 
+    if (post.status < 200 || post.status > 299) {
+      throw new Error(post.status);
+    }
     showFetchConfirmation("Succesfully sent list", target.getAttribute("id"), icon);
   } catch (err) {
     // target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
@@ -374,6 +381,11 @@ async function getFavoriteListFromServer(target, icon) {
   insertButtonSpinner(target);
   try {
     const listFromServer = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+
+    if (listFromServer.status < 200 || listFromServer.status > 299) {
+      throw new Error(listFromServer.status);
+    }
+
     const listJson = await listFromServer.json();
 
     target.innerHTML = "&#10003";
@@ -386,20 +398,60 @@ async function getFavoriteListFromServer(target, icon) {
 async function putFavoriteList(target, icon) {
   insertButtonSpinner(target);
   try {
-    
-  } catch {
+    const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
+    let favoriteBeers = findFavoriteBeers(response);
+    if (!favoriteBeers) {
+      throw new Error("List is empty. You have to add items before sending.");
+    }
 
+    const put = await fetch("https://jsonplaceholder.typicode.com/posts/1", {
+      method: "PUT",
+      body: JSON.stringify(favoriteBeers),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+
+    if (put.status < 200 || put.status > 299) {
+      throw new Error(put.status);
+    }
+    const jsonPut = await put.json();
+
+    let amountOfItems = Object.keys(jsonPut).length - 1;
+
+    showFetchConfirmation(
+      `Succesfully updated list with ${amountOfItems} new item(s)`,
+      target.getAttribute("id"),
+      icon
+    );
+  } catch (err) {
+    showFetchFailure(err, target.getAttribute("id"), icon);
   }
-
 }
 
-function showFetchedList(list) {
+async function deleteFavoriteList(target, icon) {
+  insertButtonSpinner(target);
+  if (confirm("Are you sure that you wan't to remove your list from our servers?")) {
+    try {
+      fetch("https://jsonplaceholder.typicode.com/posts/1", {
+        method: "DELETE",
+      });
+      showFetchConfirmation("Succesfully deleted list", target.getAttribute("id"), icon);
+    } catch (err) {
+      showFetchFailure(err, target.getAttribute("id"), icon);
+    }
+  } else {
+    target.innerHTML = icon;
+  }
+}
+
+async function showFetchedList(list) {
   let getRow = document.querySelector("#get-row");
   let oldH2 = document.querySelector("#get-row h2");
   let div = document.createElement("div");
   oldH2.remove();
   getRow.classList.add("showing-response");
-  
+
   div.innerHTML = `
   <div>
     <h2>Placeholder JSON response (not actual list)</h2>
@@ -415,6 +467,7 @@ function showFetchedList(list) {
   getRow.prepend(div);
 
   setTimeout(() => {
+    let getRow = document.querySelector("#get-row");
     getRow.classList.remove("showing-response");
     getRow.innerHTML = `
     <h2 id="fetch-get" class="fetch-method">Check what information we have about your list on our servers</h2>
@@ -422,7 +475,6 @@ function showFetchedList(list) {
       <i class="bi bi-file-arrow-down"></i>
     </button>`;
   }, 5000);
-
 }
 
 function insertButtonSpinner(target) {
@@ -446,7 +498,7 @@ function showFetchConfirmation(message, targetId, icon) {
   setTimeout(() => {
     document.querySelector(".fetch-alert").remove();
     document.querySelector(`#${targetId}`).innerHTML = icon;
-  }, 1500);
+  }, 2000);
 }
 
 function showFetchFailure(err, targetId, icon) {
@@ -464,7 +516,7 @@ function showFetchFailure(err, targetId, icon) {
     let target = document.querySelector(`#${targetId}`);
     target.classList.remove("failed");
     target.innerHTML = icon;
-  }, 1500);
+  }, 3000);
 }
 
 const sortForm = document.querySelector(".sort-settings");
