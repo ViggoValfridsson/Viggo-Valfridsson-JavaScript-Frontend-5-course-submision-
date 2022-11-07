@@ -340,7 +340,7 @@ sendDataModal.addEventListener("click", (event) => {
       getFavoriteListFromServer(target, getIcon);
       break;
     case "fetch-put-button":
-      console.log("put");
+      putFavoriteList(target, putIcon);
       break;
     case "fetch-delete-button":
       console.log("delete");
@@ -364,8 +364,8 @@ async function postFavoriteList(target, icon) {
 
     showFetchConfirmation("Succesfully sent list", target.getAttribute("id"), icon);
   } catch (err) {
-    target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
-    target.classList.add("failed");
+    // target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
+    // target.classList.add("failed");
     showFetchFailure(err, target.getAttribute("id"), icon);
   }
 }
@@ -379,10 +379,18 @@ async function getFavoriteListFromServer(target, icon) {
     target.innerHTML = "&#10003";
     showFetchedList(listJson);
   } catch (err) {
-    target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
-    target.classList.add("failed");
     showFetchFailure(err, target.getAttribute("id"), icon);
   }
+}
+
+async function putFavoriteList(target, icon) {
+  insertButtonSpinner(target);
+  try {
+    
+  } catch {
+
+  }
+
 }
 
 function showFetchedList(list) {
@@ -442,6 +450,9 @@ function showFetchConfirmation(message, targetId, icon) {
 }
 
 function showFetchFailure(err, targetId, icon) {
+  let target = document.querySelector(`#${targetId}`);
+  target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
+  target.classList.add("failed");
   sendDataModal.innerHTML += `
   <div id="fetch-fail-div" class="fetch-alert">
     <h4>${err}</h4>
