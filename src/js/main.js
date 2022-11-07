@@ -318,10 +318,10 @@ const sendDataModal = document.querySelector("#submit-modal");
 
 sendDataModal.addEventListener("click", (event) => {
   const target = event.target.closest(".fetch-button");
-  let postIcon = `<i class="bi bi-send"></i>`;
-  let getIcon = `<i class="bi bi-file-arrow-down"></i>`;
-  let putIcon = `<i class="bi bi-arrow-clockwise"></i>`;
-  let deleteIcon = `<i class="bi bi-trash3"></i>`;
+  let postIcon = "<i class='bi bi-send'></i>";
+  let getIcon = "<i class='bi bi-file-arrow-down'></i>";
+  let putIcon = "<i class='bi bi-arrow-clockwise'></i>";
+  let deleteIcon = "<i class='bi bi-trash3'></i>";
 
   if (!target) {
     return;
@@ -334,7 +334,10 @@ sendDataModal.addEventListener("click", (event) => {
       postFavoriteList(target, postIcon);
       break;
     case "fetch-get-button":
-      console.log("get");
+      if (target.closest("#get-row").classList.contains("showing-response")) {
+        return;
+      }
+      getFavoriteListFromServer(target, getIcon);
       break;
     case "fetch-put-button":
       console.log("put");
@@ -346,29 +349,72 @@ sendDataModal.addEventListener("click", (event) => {
 });
 
 async function postFavoriteList(target, icon) {
-  // if (target.innerHTML != icon) {
-  //   return;
-  // }
   insertButtonSpinner(target);
   try {
     const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
     let favoriteBeers = findFavoriteBeers(response);
 
-    await fetch("https://jsosnplaceholder.typicode.com/posts", {
+    await fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "POST",
       body: JSON.stringify(favoriteBeers),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     });
-    target.innerHTML = "&#10003";
-    
+
     showFetchConfirmation("Succesfully sent list", target.getAttribute("id"), icon);
   } catch (err) {
-    target.innerHTML = `<i class="bi bi-exclamation-triangle"></i>`;
+    target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
     target.classList.add("failed");
     showFetchFailure(err, target.getAttribute("id"), icon);
   }
+}
+
+async function getFavoriteListFromServer(target, icon) {
+  insertButtonSpinner(target);
+  try {
+    const listFromServer = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+    const listJson = await listFromServer.json();
+
+    target.innerHTML = "&#10003";
+    showFetchedList(listJson);
+  } catch (err) {
+    target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
+    target.classList.add("failed");
+    showFetchFailure(err, target.getAttribute("id"), icon);
+  }
+}
+
+function showFetchedList(list) {
+  let getRow = document.querySelector("#get-row");
+  let oldH2 = document.querySelector("#get-row h2");
+  let div = document.createElement("div");
+  oldH2.remove();
+  getRow.classList.add("showing-response");
+  
+  div.innerHTML = `
+  <div>
+    <h2>Placeholder JSON response (not actual list)</h2>
+    <ul>
+      <li>ID: ${list.id}</li>
+      <li>Title: ${list.title}</li>
+      <li>Body: ${list.body}</li>
+      <li>userID: ${list.userId}</li>
+    </ul>
+  <div>
+  `;
+
+  getRow.prepend(div);
+
+  setTimeout(() => {
+    getRow.classList.remove("showing-response");
+    getRow.innerHTML = `
+    <h2 id="fetch-get" class="fetch-method">Check what information we have about your list on our servers</h2>
+    <button id="fetch-get-button" type="button" class="btn fetch-button" aria-labelledby="fetch-get">
+      <i class="bi bi-file-arrow-down"></i>
+    </button>`;
+  }, 5000);
+
 }
 
 function insertButtonSpinner(target) {
@@ -381,6 +427,8 @@ function insertButtonSpinner(target) {
 }
 
 function showFetchConfirmation(message, targetId, icon) {
+  document.querySelector(`#${targetId}`).innerHTML = "&#10003";
+
   sendDataModal.innerHTML += `
   <div id="confirmation-div" class="fetch-alert">
     <h4>${message}</h4>
@@ -407,8 +455,6 @@ function showFetchFailure(err, targetId, icon) {
     target.innerHTML = icon;
   }, 1500);
 }
-
-
 
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");

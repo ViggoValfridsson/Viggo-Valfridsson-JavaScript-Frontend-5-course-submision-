@@ -87,7 +87,8 @@
       background-color: c.$button-color;
       color: c.$text-color;
       margin-left: 0.5rem;
-      width: 42px;
+      min-width: 42px;
+      max-width: 42px;
       height: 38px;
       .spinner-container {
         width: 100%;
@@ -113,6 +114,11 @@
     }
     i {
       color: c.$text-color;
+    }
+  }
+  .showing-response {
+    h2 {
+      width: 100%;
     }
   }
   .modal-footer {
