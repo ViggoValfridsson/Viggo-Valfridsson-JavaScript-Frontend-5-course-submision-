@@ -326,9 +326,9 @@ sendDataModal.addEventListener("click", (event) => {
 
   let targetId = target.getAttribute("id");
 
-  switch(targetId) {
+  switch (targetId) {
     case "fetch-post-button":
-      console.log("post");
+      postFavoriteList();
       break;
     case "fetch-get-button":
       console.log("get");
@@ -341,6 +341,41 @@ sendDataModal.addEventListener("click", (event) => {
       break;
   }
 });
+
+async function postFavoriteList() {
+  try {
+    const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
+    let favoriteBeers = findFavoriteBeers(response);
+
+    await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      body: JSON.stringify(favoriteBeers),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+  
+    
+    showFetchConfirmation();
+  } catch (err) {
+    showFetchFailure(err);
+  }
+}
+
+function showFetchConfirmation() {
+  console.log("success");
+  let confirmationDiv = document.createElement("div");
+  confirmationDiv.classList.add("confirmation-div");
+  document.body.append(confirmationDiv);
+
+  //timeout funktion som raderar diven
+}
+
+function showFetchFailure(err) {
+  console.log(err);
+}
+
+
 
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
