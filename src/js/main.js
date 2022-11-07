@@ -314,6 +314,211 @@ function deleteSpecificCookie(target) {
   });
 }
 
+const sendDataModal = document.querySelector("#submit-modal");
+
+sendDataModal.addEventListener("click", (event) => {
+  const target = event.target.closest(".fetch-button");
+  let postIcon = "<i class='bi bi-send'></i>";
+  let getIcon = "<i class='bi bi-file-arrow-down'></i>";
+  let putIcon = "<i class='bi bi-arrow-clockwise'></i>";
+  let deleteIcon = "<i class='bi bi-trash3'></i>";
+
+  if (!target) {
+    return;
+  }
+
+  let targetId = target.getAttribute("id");
+
+  switch (targetId) {
+    case "fetch-post-button":
+      postFavoriteList(target, postIcon);
+      break;
+    case "fetch-get-button":
+      if (target.closest("#get-row").classList.contains("showing-response")) {
+        return;
+      }
+      getFavoriteListFromServer(target, getIcon);
+      break;
+    case "fetch-put-button":
+      putFavoriteList(target, putIcon);
+      break;
+    case "fetch-delete-button":
+      deleteFavoriteList(target, deleteIcon);
+      break;
+  }
+});
+
+async function postFavoriteList(target, icon) {
+  insertButtonSpinner(target);
+  try {
+    const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
+    let favoriteBeers = findFavoriteBeers(response);
+
+    if (!favoriteBeers) {
+      throw new Error("List is empty. You have to add items before sending.");
+    }
+
+    const post = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      body: JSON.stringify(favoriteBeers),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+
+    if (post.status < 200 || post.status > 299) {
+      throw new Error(post.status);
+    }
+    showFetchConfirmation("Succesfully sent list", target.getAttribute("id"), icon);
+  } catch (err) {
+    // target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
+    // target.classList.add("failed");
+    showFetchFailure(err, target.getAttribute("id"), icon);
+  }
+}
+
+async function getFavoriteListFromServer(target, icon) {
+  insertButtonSpinner(target);
+  try {
+    const listFromServer = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+
+    if (listFromServer.status < 200 || listFromServer.status > 299) {
+      throw new Error(listFromServer.status);
+    }
+
+    const listJson = await listFromServer.json();
+
+    target.innerHTML = "&#10003";
+    showFetchedList(listJson);
+  } catch (err) {
+    showFetchFailure(err, target.getAttribute("id"), icon);
+  }
+}
+
+async function putFavoriteList(target, icon) {
+  insertButtonSpinner(target);
+  try {
+    const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
+    let favoriteBeers = findFavoriteBeers(response);
+    if (!favoriteBeers) {
+      throw new Error("List is empty. You have to add items before sending.");
+    }
+
+    const put = await fetch("https://jsonplaceholder.typicode.com/posts/1", {
+      method: "PUT",
+      body: JSON.stringify(favoriteBeers),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+
+    if (put.status < 200 || put.status > 299) {
+      throw new Error(put.status);
+    }
+    const jsonPut = await put.json();
+
+    let amountOfItems = Object.keys(jsonPut).length - 1;
+
+    showFetchConfirmation(
+      `Succesfully updated list with ${amountOfItems} new item(s)`,
+      target.getAttribute("id"),
+      icon
+    );
+  } catch (err) {
+    showFetchFailure(err, target.getAttribute("id"), icon);
+  }
+}
+
+async function deleteFavoriteList(target, icon) {
+  insertButtonSpinner(target);
+  if (confirm("Are you sure that you wan't to remove your list from our servers?")) {
+    try {
+      fetch("https://jsonplaceholder.typicode.com/posts/1", {
+        method: "DELETE",
+      });
+      showFetchConfirmation("Succesfully deleted list", target.getAttribute("id"), icon);
+    } catch (err) {
+      showFetchFailure(err, target.getAttribute("id"), icon);
+    }
+  } else {
+    target.innerHTML = icon;
+  }
+}
+
+async function showFetchedList(list) {
+  let getRow = document.querySelector("#get-row");
+  let oldH2 = document.querySelector("#get-row h2");
+  let div = document.createElement("div");
+  oldH2.remove();
+  getRow.classList.add("showing-response");
+
+  div.innerHTML = `
+  <div>
+    <h2>Placeholder JSON response (not actual list)</h2>
+    <ul>
+      <li>ID: ${list.id}</li>
+      <li>Title: ${list.title}</li>
+      <li>Body: ${list.body}</li>
+      <li>userID: ${list.userId}</li>
+    </ul>
+  <div>
+  `;
+
+  getRow.prepend(div);
+
+  setTimeout(() => {
+    let getRow = document.querySelector("#get-row");
+    getRow.classList.remove("showing-response");
+    getRow.innerHTML = `
+    <h2 id="fetch-get" class="fetch-method">Check what information we have about your list on our servers</h2>
+    <button id="fetch-get-button" type="button" class="btn fetch-button" aria-labelledby="fetch-get">
+      <i class="bi bi-file-arrow-down"></i>
+    </button>`;
+  }, 5000);
+}
+
+function insertButtonSpinner(target) {
+  target.innerHTML = `  
+  <div class="spinner-container">
+    <div class="spinner-border spinner-border-sm text-white" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>`;
+}
+
+function showFetchConfirmation(message, targetId, icon) {
+  document.querySelector(`#${targetId}`).innerHTML = "&#10003";
+
+  sendDataModal.innerHTML += `
+  <div id="confirmation-div" class="fetch-alert">
+    <h4>${message}</h4>
+  </div>
+  `;
+
+  setTimeout(() => {
+    document.querySelector(".fetch-alert").remove();
+    document.querySelector(`#${targetId}`).innerHTML = icon;
+  }, 2000);
+}
+
+function showFetchFailure(err, targetId, icon) {
+  let target = document.querySelector(`#${targetId}`);
+  target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
+  target.classList.add("failed");
+  sendDataModal.innerHTML += `
+  <div id="fetch-fail-div" class="fetch-alert">
+    <h4>${err}</h4>
+    <p class="lead">Please try again</p>
+  </div>
+  `;
+  setTimeout(() => {
+    document.querySelector(".fetch-alert").remove();
+    let target = document.querySelector(`#${targetId}`);
+    target.classList.remove("failed");
+    target.innerHTML = icon;
+  }, 3000);
+}
+
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
 const maltFilter = document.querySelector("#filter-by-malt");

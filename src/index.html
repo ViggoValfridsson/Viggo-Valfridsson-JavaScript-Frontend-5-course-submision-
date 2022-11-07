@@ -27,12 +27,77 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn close-text" data-bs-dismiss="modal">Close</button>
-            <button id="clear-cookies-button" type="button" class="btn btn-danger ">Delete list</button>
-            <button type="button" class="btn button-send-data">Send in your list for statistics</button>
+            <button id="clear-cookies-button" type="button" class="btn btn-danger">Delete list</button>
+            <button
+              type="button"
+              class="btn button-send-data"
+              data-bs-toggle="modal"
+              data-bs-target="#submit-data-modal"
+            >
+              Send in your list for statistics
+            </button>
           </div>
         </div>
       </div>
     </div>
+
+    <div
+      class="modal fade"
+      id="submit-data-modal"
+      tabindex="-1"
+      aria-labelledby="submit-data-modal-label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div id="submit-modal" class="modal-content">
+          <div class="modal-header">
+            <h1 class="display-5" id="submit-data-modal-label">Send in your list!</h1>
+            <button type="button" class="close-button" data-bs-dismiss="modal" aria-label="Close">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="modal-row">
+              <h2 id="fetch-post" class="fetch-method">Send in your list for statistics</h2>
+              <button id="fetch-post-button" type="button" class="btn fetch-button" aria-labelledby="fetch-post">
+                <i class="bi bi-send"></i>
+              </button>
+            </div>
+
+            <div id="get-row" class="modal-row">
+              <h2 id="fetch-get" class="fetch-method">Check what information we have about your list on our servers</h2>
+              <button id="fetch-get-button" type="button" class="btn fetch-button" aria-labelledby="fetch-get">
+                <i class="bi bi-file-arrow-down"></i>
+              </button>
+            </div>
+
+            <div class="modal-row">
+              <h2 id="fetch-put" class="fetch-method">Update your list on our servers</h2>
+              <button id="fetch-put-button" type="button" class="btn fetch-button" aria-labelledby="fetch-put">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+
+            <div class="modal-row">
+              <h2 id="fetch-delete" class="fetch-method">Delete list from our servers.</h2>
+              <button
+                id="fetch-delete-button"
+                type="button"
+                class="btn fetch-button"
+                aria-labelledby="fetch-delete"
+              >
+              <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn close-text" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <header id="top">
       <div class="container-xxl">
         <h1>Viggos Ölsida</h1>
@@ -118,5 +183,6 @@
     </main>
     <script type="module" src="js/main.js"></script>
     <script type="module" src="../node_modules/bootstrap/js/src/modal.js"></script>
+
   </body>
 </html>
