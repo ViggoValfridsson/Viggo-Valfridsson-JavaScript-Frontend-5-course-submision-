@@ -71,6 +71,36 @@
   }
 }
 
+#submit-modal {
+  .fetch-method {
+    font-weight: 300;
+    font-size: 2rem;
+  }
+  .modal-row {
+    border-top: 1px solid c.$border-color;
+    display: flex;
+    padding: 1rem 1rem;
+    justify-content: space-between;
+    align-items: center;
+    button {
+      background-color: c.$button-color;
+      margin-left: 0.5rem;
+      &:hover {
+        background-color: c.$button-color-hover;
+      }
+    }
+    #fetch-delete-button {
+      background-color: #dc3545;
+    }
+    i {
+      color: c.$text-color;
+    }
+  }
+  .modal-footer {
+    border-top: 1px solid c.$border-color;
+  }
+}
+
 header {
   background-color: c.$dark-page-background;
   border-bottom: 1px solid c.$border-color;
