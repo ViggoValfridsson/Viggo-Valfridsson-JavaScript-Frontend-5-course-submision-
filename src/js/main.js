@@ -53,6 +53,7 @@ function addDateToObjects(beerObjects) {
 //lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
+  
   if (array.length === 0) {
     cardContainer.innerHTML = `
     <div class="error">
