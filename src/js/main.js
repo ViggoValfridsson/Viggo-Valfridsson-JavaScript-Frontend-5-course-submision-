@@ -540,6 +540,58 @@ function showFetchFailure(err, targetId, icon) {
   }, 3000);
 }
 
+(function checkTheme() {
+  // localStorage.clear();
+  let theme = localStorage.getItem("theme");
+
+  if (theme === "light") {
+    setTheme("light");
+  } else {
+    setTheme("dark");
+  }
+})();
+
+const themeContainer = document.querySelector(".theme");
+
+themeContainer.addEventListener("click", (event) => {
+  const target = event.target.closest(".theme-button");
+
+  if(!target || !themeContainer.contains(target)) {
+    return;
+  }
+
+  let chosenTheme = target.getAttribute("id");
+  
+  setTheme(chosenTheme);
+});
+
+function setTheme(chosenTheme) {
+  let darkSCSS = document.querySelector("link[title=\"dark\"]");
+  let lightSCSS = document.querySelector("link[title=\"light\"]");
+  
+  localStorage.setItem("theme", chosenTheme);
+  switch(chosenTheme) {
+    case "dark":
+      if (darkSCSS.rel === "stylesheet") {
+        console.log("already dark");
+        return;
+      }
+      darkSCSS.rel = "stylesheet";
+      lightSCSS.rel = "stylesheet alternate";
+      console.log("dark switch");
+      break;
+    case "light":
+      if (lightSCSS.rel === "stylesheet") {
+        console.log("already light");
+        return;
+      }
+      darkSCSS.rel = "stylesheet alternate";
+      lightSCSS.rel = "stylesheet";
+      console.log("light switch");
+      break;
+  }
+}
+
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
 const maltFilter = document.querySelector("#filter-by-malt");
