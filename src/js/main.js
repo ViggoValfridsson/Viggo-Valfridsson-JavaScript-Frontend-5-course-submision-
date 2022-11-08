@@ -53,10 +53,11 @@ function addDateToObjects(beerObjects) {
 //lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
+  
   if (array.length === 0) {
     cardContainer.innerHTML = `
     <div class="error">
-      <h2>We could not find any beers matching your request</h2>
+      <h2>We could not find any beers matching your request.</h2>
       <p>Check if your spelling is correct. If you believe this is an error feel free to contact us.</p>
     </div>`;
     return;
@@ -66,13 +67,25 @@ function insertElements(array, amount, page) {
   let i = amount * (page - 1);
   let loopLength = amount + i;
   let amountOfPages = Math.ceil(array.length / amount);
+  let rowNumber;
 
   cardContainer.innerHTML = "";
 
   for (i; i < loopLength; i++) {
+
     if (array[i] === undefined) {
       continue;
     }
+
+    if (i % 4 === 0) {
+      let cardRow = document.createElement("div");
+      rowNumber = (i / 4 )+ 1;
+
+      cardRow.classList.add("card-row");
+      cardRow.classList.add(`row-${rowNumber}`);
+      cardContainer.append(cardRow);
+    }
+
     let beer = array[i];
     let beerImageSource = beer.image_url;
     let beerName = beer.name;
@@ -81,6 +94,10 @@ function insertElements(array, amount, page) {
     let alcoholContent = beer.abv + "%";
     let ibu = beer.ibu ? beer.ibu : "Unknown";
     let beerDescription = beer.description;
+    if (beerDescription.length > 390) {
+      beerDescription = beerDescription.slice(0, 350);
+      beerDescription += "...";
+    }
     let maltArray = beer.ingredients.malt;
     let maltString = "";
     let beerId = beer.id;
@@ -93,24 +110,28 @@ function insertElements(array, amount, page) {
       maltString += name;
     }
 
-    cardContainer.innerHTML += `
+    let currentRow = document.querySelector(`.row-${rowNumber}`);
+
+    currentRow.innerHTML += `
       <div class="card">
         <div class="img-wrapper">
           <img src="${beerImageSource}" class="card-img-top" alt="A picture of ${beerName}" />
         </div>
         <div class="card-body">
-          <h2 class="card-title">${beerName}</h2>
-          <p class="tagline">${tagline}</p>
-          <ul class="Info">
-            <li>${beerDate}</li>
-            <li>ABV: ${alcoholContent}</li>
-            <li>IBU: ${ibu}</li>
-            <li>Malt: ${maltString}</li>
-          </ul>
-          <p class="description">${beerDescription}</p>
-            <div class="button-wrapper">
-              <button id="favorite-${beerId}" type="button" class="btn button-favorites">Add to favorites</button>
-            </div>
+          <div class="card-info">
+            <h2 class="card-title">${beerName}</h2>
+            <p class="tagline">${tagline}</p>
+            <ul class="Info">
+              <li>${beerDate}</li>
+              <li>ABV: ${alcoholContent}</li>
+              <li>IBU: ${ibu}</li>
+              <li>Malt: ${maltString}</li>
+            </ul>
+            <p class="description">${beerDescription}</p>
+          </div>
+          <div class="button-wrapper">
+            <button id="favorite-${beerId}" type="button" class="btn button-favorites">Add to favorites</button>
+          </div>
         </div>
       </div>
     `;
@@ -119,7 +140,7 @@ function insertElements(array, amount, page) {
   let backPageNumber = page - 1 > 0 ? page - 1 : 1;
   let highestAllowedPage;
   let buttonString = `<div class="page-buttons">
-  <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
+  <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button><div class="numbered-buttons">`;
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
@@ -129,7 +150,7 @@ function insertElements(array, amount, page) {
     }
   }
   let forwardPageNumber = page + 1 < highestAllowedPage ? page + 1 : highestAllowedPage;
-  buttonString += `<button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
+  buttonString += `</div><button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
 

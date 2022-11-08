@@ -165,6 +165,7 @@ body {
   padding-top: 2rem;
   padding-bottom: 2rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   select {
@@ -173,31 +174,69 @@ body {
     color: c.$text-color;
     border-radius: 10px;
     height: 2.5rem;
-    width: 9rem;
+    width: 45%;
     padding: 0 0.5rem;
+    margin: 0 1rem;
   }
   .filters {
-    :nth-child(2) {
-      margin: 0 2rem;
-    }
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
   }
-  input {
+  .search-and-sort {
+    @extend .filters;
+    margin-top: 1rem;
+  }
+  .input-group {
     background-color: c.$item-background;
     border: 1px solid c.$border-color;
     color: c.$text-color;
     border-radius: 10px;
     height: 2.5rem;
-    width: 18rem;
-    padding: 0 0.5rem;
-    margin: 0 2rem;
+    width: 45%;
+    
+    margin: 0 1rem;
+    input {
+      background-color: c.$item-background;
+      border: none;
+      border-right: 1px solid c.$border-color;
+      padding: 0 0.5rem;
+      border-radius: 10px;
+      color: c.$text-color;
+      width: 85%;
+    }
+    button {
+      background-color: c.$item-background;
+      border: none;
+      float: right;
+      border-radius: 10px;
+      width: 15%;
+      display: flex;
+      justify-content: center;
+      &:hover {
+        background-color: rgba($color: #000000, $alpha: 0.5);
+      }
+    }
+    i {
+      color: c.$text-color;
+    }
   }
 }
 
 .card-container {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  .card-row {
+    width: 100%;
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .error {
     color: c.$text-color;
   }
@@ -229,7 +268,14 @@ body {
       background-color: rgba($color: #000000, $alpha: 0.5);
     }
   }
+  .numbered-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   .page-button {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
     background-color: c.$item-background;
     border: 1px solid c.$border-color;
     color: c.$text-color;
@@ -252,3 +298,15 @@ body {
     font-size: 1.5rem;
   }
 }
+
+@media (min-width: 1000px) {
+  .sort-settings {
+    .filters {
+      width: 45%;
+    }
+    .search-and-sort {
+      margin-top: 0;
+    }
+  }
+}
+
