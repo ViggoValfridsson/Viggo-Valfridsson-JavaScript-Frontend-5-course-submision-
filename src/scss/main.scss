@@ -201,11 +201,10 @@ body {
   justify-content: center;
   .card-row {
     width: 100%;
-    height: 50rem;
     flex-wrap: wrap;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
   }
   .error {
     color: c.$text-color;

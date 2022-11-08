@@ -2,8 +2,8 @@
 @use "../abstracts/animations";
 
 .card {
-  width: 18rem;
-  height: 100%;
+  margin: 1rem;
+  width: 70%;
   background-color: c.$item-background;
   color: c.$text-color;
   padding-top: 1rem;
@@ -30,6 +30,9 @@
   .card-title {
     text-align: center;
   }
+  .tagline {
+    text-align: center;
+  }
   .button-wrapper {
     display: flex;
     justify-content: center;
@@ -49,3 +52,27 @@
     }
   }
 }
+
+@media (min-width: 670px) {
+  .card {
+    width: 45%;
+    height: 50rem;
+  }
+  //1310
+}
+
+@media (min-width: 1000px) {
+  .card {
+    width: 34%;
+    height: 50rem;
+  }
+  //1310
+}
+
+@media (min-width: 1330px) {
+  .card {
+    width: 18rem;
+    height: 50rem;
+  }
+}
+
