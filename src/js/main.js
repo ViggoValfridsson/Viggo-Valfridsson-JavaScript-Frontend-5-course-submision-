@@ -66,13 +66,25 @@ function insertElements(array, amount, page) {
   let i = amount * (page - 1);
   let loopLength = amount + i;
   let amountOfPages = Math.ceil(array.length / amount);
+  let rowNumber;
 
   cardContainer.innerHTML = "";
 
   for (i; i < loopLength; i++) {
+
     if (array[i] === undefined) {
       continue;
     }
+
+    if (i % 4 === 0) {
+      let cardRow = document.createElement("div");
+      rowNumber = (i / 4 )+ 1;
+
+      cardRow.classList.add("card-row");
+      cardRow.classList.add(`row-${rowNumber}`);
+      cardContainer.append(cardRow);
+    }
+
     let beer = array[i];
     let beerImageSource = beer.image_url;
     let beerName = beer.name;
@@ -81,6 +93,10 @@ function insertElements(array, amount, page) {
     let alcoholContent = beer.abv + "%";
     let ibu = beer.ibu ? beer.ibu : "Unknown";
     let beerDescription = beer.description;
+    if (beerDescription.length > 390) {
+      beerDescription = beerDescription.slice(0, 350);
+      beerDescription += "...";
+    }
     let maltArray = beer.ingredients.malt;
     let maltString = "";
     let beerId = beer.id;
@@ -93,24 +109,28 @@ function insertElements(array, amount, page) {
       maltString += name;
     }
 
-    cardContainer.innerHTML += `
+    let currentRow = document.querySelector(`.row-${rowNumber}`);
+
+    currentRow.innerHTML += `
       <div class="card">
         <div class="img-wrapper">
           <img src="${beerImageSource}" class="card-img-top" alt="A picture of ${beerName}" />
         </div>
         <div class="card-body">
-          <h2 class="card-title">${beerName}</h2>
-          <p class="tagline">${tagline}</p>
-          <ul class="Info">
-            <li>${beerDate}</li>
-            <li>ABV: ${alcoholContent}</li>
-            <li>IBU: ${ibu}</li>
-            <li>Malt: ${maltString}</li>
-          </ul>
-          <p class="description">${beerDescription}</p>
-            <div class="button-wrapper">
-              <button id="favorite-${beerId}" type="button" class="btn button-favorites">Add to favorites</button>
-            </div>
+          <div class="card-info">
+            <h2 class="card-title">${beerName}</h2>
+            <p class="tagline">${tagline}</p>
+            <ul class="Info">
+              <li>${beerDate}</li>
+              <li>ABV: ${alcoholContent}</li>
+              <li>IBU: ${ibu}</li>
+              <li>Malt: ${maltString}</li>
+            </ul>
+            <p class="description">${beerDescription}</p>
+          </div>
+          <div class="button-wrapper">
+            <button id="favorite-${beerId}" type="button" class="btn button-favorites">Add to favorites</button>
+          </div>
         </div>
       </div>
     `;

@@ -3,12 +3,19 @@
 
 .card {
   width: 18rem;
+  height: 100%;
   background-color: c.$item-background;
   color: c.$text-color;
   padding-top: 1rem;
   border-radius: 10px;
   border: 1px solid c.$border-color;
   @include animations.grow-middle;
+  .card-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
   .img-wrapper {
     height: 14rem;
     margin: 0 1rem;
