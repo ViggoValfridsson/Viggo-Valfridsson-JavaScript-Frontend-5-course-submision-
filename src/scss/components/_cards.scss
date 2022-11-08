@@ -41,8 +41,11 @@
     background-color: c.$button-color;
     color: c.$text-color;
     width: 11rem;
-    &:hover {
+    &:hover, &:focus {
       background-color: c.$button-color-hover;
+    }
+    &:focus {
+      outline: 1px solid #4D90FE;
     }
   }
   .active-button {
