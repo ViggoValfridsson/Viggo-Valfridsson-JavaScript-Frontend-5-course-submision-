@@ -139,7 +139,7 @@ function insertElements(array, amount, page) {
   let backPageNumber = page - 1 > 0 ? page - 1 : 1;
   let highestAllowedPage;
   let buttonString = `<div class="page-buttons">
-  <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button>`;
+  <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button><div class="numbered-buttons">`;
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
@@ -149,7 +149,7 @@ function insertElements(array, amount, page) {
     }
   }
   let forwardPageNumber = page + 1 < highestAllowedPage ? page + 1 : highestAllowedPage;
-  buttonString += `<button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
+  buttonString += `</div><button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
   cardContainer.innerHTML += buttonString;
 

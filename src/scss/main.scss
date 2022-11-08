@@ -268,7 +268,14 @@ body {
       background-color: rgba($color: #000000, $alpha: 0.5);
     }
   }
+  .numbered-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   .page-button {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
     background-color: c.$item-background;
     border: 1px solid c.$border-color;
     color: c.$text-color;
@@ -309,3 +316,41 @@ body {
   }
 }
 
+// .page-buttons {
+//   width: 100%;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   button {
+//     margin: 0 0.3rem;
+//   }
+//   .button-arrow {
+//     background: none;
+//     border: none;
+//     &:hover {
+//       background-color: rgba($color: #000000, $alpha: 0.5);
+//     }
+//   }
+//   .page-button {
+//     background-color: c.$item-background;
+//     border: 1px solid c.$border-color;
+//     color: c.$text-color;
+//     width: 2rem;
+//     height: 2rem;
+//     border-radius: 10px;
+//     font-size: 1rem;
+//     &:hover {
+//       background-color: c.$dark-page-background-hover;
+//     }
+//   }
+//   .active {
+//     background-color: c.$button-color;
+//     &:hover &:focus {
+//       background-color: c.$button-color;
+//     }
+//   }
+//   i {
+//     color: white;
+//     font-size: 1.5rem;
+//   }
+// }
