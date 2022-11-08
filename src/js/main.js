@@ -541,7 +541,7 @@ function showFetchFailure(err, targetId, icon) {
 }
 
 (function checkTheme() {
-  // localStorage.clear();
+  //localStorage.clear();
   let theme = localStorage.getItem("theme");
 
   if (theme === "light") {
@@ -566,28 +566,19 @@ themeContainer.addEventListener("click", (event) => {
 });
 
 function setTheme(chosenTheme) {
-  let darkSCSS = document.querySelector("link[title=\"dark\"]");
-  let lightSCSS = document.querySelector("link[title=\"light\"]");
+  const mainSCSS = document.querySelector("link[title=\"main\"]");
+  const darkSCSS = document.querySelector("link[title=\"dark\"]");
+  const lightSCSS = document.querySelector("link[title=\"light\"]");
+  const darkLink = new URL(darkSCSS.href).pathname;
+  const lighLink = new URL(lightSCSS.href).pathname;
   
   localStorage.setItem("theme", chosenTheme);
   switch(chosenTheme) {
     case "dark":
-      if (darkSCSS.rel === "stylesheet") {
-        console.log("already dark");
-        return;
-      }
-      darkSCSS.rel = "stylesheet";
-      lightSCSS.rel = "stylesheet alternate";
-      console.log("dark switch");
+      mainSCSS.href = darkLink;
       break;
     case "light":
-      if (lightSCSS.rel === "stylesheet") {
-        console.log("already light");
-        return;
-      }
-      darkSCSS.rel = "stylesheet alternate";
-      lightSCSS.rel = "stylesheet";
-      console.log("light switch");
+      mainSCSS.href = lighLink;
       break;
   }
 }
