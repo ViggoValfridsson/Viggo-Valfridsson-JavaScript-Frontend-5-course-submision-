@@ -80,16 +80,10 @@
 
             <div class="modal-row">
               <h2 id="fetch-delete" class="fetch-method">Delete list from our servers.</h2>
-              <button
-                id="fetch-delete-button"
-                type="button"
-                class="btn fetch-button"
-                aria-labelledby="fetch-delete"
-              >
-              <i class="bi bi-trash3"></i>
+              <button id="fetch-delete-button" type="button" class="btn fetch-button" aria-labelledby="fetch-delete">
+                <i class="bi bi-trash3"></i>
               </button>
             </div>
-
           </div>
           <div class="modal-footer">
             <button type="button" class="btn close-text" data-bs-dismiss="modal">Close</button>
@@ -156,13 +150,24 @@
         </select>
       </div>
       <div class="search-and-sort">
-        <input
+        <!-- <input
           id="search-by-name"
           title="search-by-name"
           placeholder="Search by name..."
           type="text"
           autocomplete="off"
-        />
+        /> -->
+        <div class="input-group">
+          <input
+            id="search-by-name"
+            title="search-by-name"
+            placeholder="Search by name..."
+            type="text"
+            autocomplete="off"
+          />
+          <button title="search" type="submit" class="input-group-text"><i class="bi bi-search"></i></button>
+        </div>
+
         <select name="sort-by" title="sort-by" id="sort-by" autocomplete="off">
           <option selected disabled value="undefined">Sort</option>
           <option value="A-Z">A-Z</option>
@@ -183,6 +188,5 @@
     </main>
     <script type="module" src="js/main.js"></script>
     <script type="module" src="../node_modules/bootstrap/js/src/modal.js"></script>
-
   </body>
 </html>

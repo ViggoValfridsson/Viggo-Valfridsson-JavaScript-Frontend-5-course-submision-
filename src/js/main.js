@@ -56,7 +56,7 @@ function insertElements(array, amount, page) {
   if (array.length === 0) {
     cardContainer.innerHTML = `
     <div class="error">
-      <h2>We could not find any beers matching your request</h2>
+      <h2>We could not find any beers matching your request.</h2>
       <p>Check if your spelling is correct. If you believe this is an error feel free to contact us.</p>
     </div>`;
     return;
