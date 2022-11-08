@@ -140,20 +140,39 @@ header {
     color: c.$text-color;
   }
   button {
+    height: 100%;
     background: none;
     border: none;
-    height: 100%;
-    width: 6rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     &:hover {
       background-color: c.$dark-page-background-hover;
     }
   }
-  i {
+  .theme {
+    width: 10%;
+    margin-right: 3rem;
+  }
+  .theme-button {
+    display: flex;
+    padding: 1rem 0;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
     color: c.$text-color;
-    font-size: 3rem;
+    i {
+      color: c.$text-color;
+      font-size: 1.5rem;
+      width: 100%;
+    }
+  }
+  .show-modal-button {
+    width: 6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    i {
+      color: c.$text-color;
+      font-size: 3rem;
+    }
   }
 }
 
@@ -176,7 +195,7 @@ body {
     height: 2.5rem;
     width: 45%;
     padding: 0 0.5rem;
-    margin: 0 1rem;
+    margin: 0 0.2rem;
   }
   .filters {
     display: flex;
@@ -189,14 +208,14 @@ body {
     margin-top: 1rem;
   }
   .input-group {
+  
     background-color: c.$item-background;
     border: 1px solid c.$border-color;
     color: c.$text-color;
     border-radius: 10px;
     height: 2.5rem;
     width: 45%;
-    
-    margin: 0 1rem;
+    margin: 0 0.2rem;
     input {
       background-color: c.$item-background;
       border: none;
@@ -207,11 +226,11 @@ body {
       width: 85%;
     }
     button {
+      float: right;
       background-color: c.$item-background;
       border: none;
-      float: right;
       border-radius: 10px;
-      width: 15%;
+      min-width: 15%;
       display: flex;
       justify-content: center;
       &:hover {
@@ -299,14 +318,30 @@ body {
   }
 }
 
+@media (min-width: 690px) {
+  .sort-settings {
+    select {
+      margin: 0 1rem;
+    }
+    .search-and-sort .input-group {
+      margin: 0 1rem;
+    }
+  }
+}
+
 @media (min-width: 1000px) {
   .sort-settings {
+    select {
+      margin: 0 1rem;
+    }
     .filters {
       width: 45%;
     }
     .search-and-sort {
       margin-top: 0;
+      .input-group {
+        margin: 0 1rem;
+      }
     }
   }
 }
-
