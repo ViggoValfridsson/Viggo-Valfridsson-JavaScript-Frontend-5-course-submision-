@@ -19,6 +19,7 @@ export function setCookie(name, value, options = {}) {
   for (let optionAlternative in options) {
     cookie += ";" + optionAlternative;
     let optionValue = options[optionAlternative];
+
     if (optionValue !== true) {
       cookie += "=" + optionValue;
     }
@@ -31,6 +32,7 @@ export function getCookie(name) {
   let matches = document.cookie.match(
     new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()[\]\\/+^])/g, "\\$1") + "=([^;]*)")
   );
+  
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
