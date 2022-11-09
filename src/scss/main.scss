@@ -22,13 +22,25 @@
     padding: 0.3rem 1rem 1rem 1rem;
     margin: 0;
   }
+  button {
+    height: 4rem;
+    padding: 0;
+  }
   .close-text {
     background-color: c.$item-background;
     border: 1px solid c.$border-color;
     color: c.$text-color;
+    width: 16%;
+    text-align: center;
     &:hover {
       background-color: rgba($color: #000000, $alpha: 0.5);
     }
+  }
+  #clear-cookies-button {
+    width: 23%;
+  }
+  .button-send-data {
+    width: 49%;
   }
   .close-button {
     background: none;
@@ -136,7 +148,7 @@ header {
     min-height: 6rem;
   }
   h1 {
-    width: 80%;
+    width: 70%;
     color: c.$text-color;
     margin: 1rem0;
   }
@@ -149,9 +161,12 @@ header {
       background-color: c.$dark-page-background-hover;
     }
   }
+  .theme {
+    margin: 0;
+  }
   .theme-button {
     display: flex;
-    width: 6rem;
+    width: 50%;
     padding: 1rem 0;
     align-items: center;
     justify-content: center;
@@ -164,7 +179,8 @@ header {
     }
   }
   .show-modal-button {
-    width: 6rem;
+    min-width: 17%;
+    max-width: 6rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -325,21 +341,30 @@ body {
   }
 }
 
-@media (min-width: 690px) {
+@media (min-width: 576px) {
+  .modal-content button {
+    height: 2.5rem;
+  }
   .sort-settings {
     select {
       margin: 0 1rem;
     }
-    .search-and-sort .input-group {
-      margin: 0 1rem;
-      input {
-        width: 85%;
-      }
+  }
+}
+
+@media (min-width: 690px) {
+  .theme {
+    width: 12rem;
+  }
+  .search-and-sort .input-group {
+    margin: 0 1rem;
+    input {
+      width: 85%;
     }
   }
-  .theme {
-    margin-right: 3rem;
-  }
+}
+.theme {
+  margin-right: 3rem;
 }
 
 @media (min-width: 1000px) {
