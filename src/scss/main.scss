@@ -64,6 +64,20 @@
   .modal-footer {
     border-top: none;
   }
+  .modal-error {
+    border-top: 1px solid c.$border-color;
+    border-bottom: 1px solid c.$border-color;
+    padding: 1rem;
+    .error-background {
+      background-color: c.$red-button;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .error-tip {
+      font-size: 1.5rem;
+      font-weight: 300;
+    }
+  }
   .button-send-data {
     background-color: c.$button-color;
     color: c.$text-color;
@@ -262,6 +276,10 @@ body {
   }
 }
 
+main {
+  min-height: 80vh;
+}
+
 .card-container {
   display: flex;
   flex-direction: column;
@@ -277,6 +295,15 @@ body {
   }
   .error {
     color: c.$text-color;
+  }
+  .fetch-error {
+    background-color: c.$red-button;
+    border: 1px solid c.$border-color;
+    padding: 1rem;
+    border-radius: 10px;
+    p {
+      font-size: 1.5rem;
+    }
   }
   .spinner-container {
     width: 100%;

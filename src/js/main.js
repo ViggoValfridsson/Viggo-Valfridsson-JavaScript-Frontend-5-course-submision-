@@ -3,10 +3,14 @@ import { setCookie, getCookie, deleteCookie } from "./cookies";
 
 let beerObjects;
 
-fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
-  beerObjects = response;
-  insertElements(response, 12, 1);
-});
+fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
+  .then((response) => {
+    beerObjects = response;
+    insertElements(response, 12, 1);
+  })
+  .catch((err) => {
+    showCardError(err);
+  });
 
 //lägg till felhantering!
 //fetchar och retunerar json objekt
@@ -53,7 +57,7 @@ function addDateToObjects(beerObjects) {
 //lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
-  
+
   if (array.length === 0) {
     cardContainer.innerHTML = `
     <div class="error">
@@ -72,14 +76,13 @@ function insertElements(array, amount, page) {
   cardContainer.innerHTML = "";
 
   for (i; i < loopLength; i++) {
-
     if (array[i] === undefined) {
       continue;
     }
 
     if (i % 4 === 0) {
       let cardRow = document.createElement("div");
-      rowNumber = (i / 4 )+ 1;
+      rowNumber = i / 4 + 1;
 
       cardRow.classList.add("card-row");
       cardRow.classList.add(`row-${rowNumber}`);
@@ -166,6 +169,29 @@ function insertElements(array, amount, page) {
   });
 }
 
+function showCardError(err) {
+  let cardContainer = document.querySelector(".card-container");
+
+  cardContainer.innerHTML = `
+  <div class="fetch-error error">
+    <h2>${err}</h2>
+    <p class="lead">Try reloading the site!</p>
+  </div>`;
+}
+
+function showModalError(err) {
+  const modalBody = document.querySelector("#favoriteModal .modal-body");
+
+  modalBody.innerHTML = `
+  <div class="modal-error">
+    <div class="error-background">
+      <h2 class="error-title">${err}</h2>
+      <p class="error-tip">Try reloading the page!</p>
+    </div>
+  </div>
+  `;
+}
+
 let cardContainer = document.querySelector(".card-container");
 
 //deleteCookie("favoriteList");
@@ -212,11 +238,13 @@ const clearCookiesButton = document.querySelector("#clear-cookies-button");
 
 showListButton.addEventListener("click", () => {
   showModalSpinner();
-  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
-    let allBeerObjects = response;
-    let favoriteBeers = findFavoriteBeers(allBeerObjects);
-    insertModalContent(favoriteBeers);
-  });
+  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
+    .then((response) => {
+      let allBeerObjects = response;
+      let favoriteBeers = findFavoriteBeers(allBeerObjects);
+      insertModalContent(favoriteBeers);
+    })
+    .catch((err) => showModalError(err));
 });
 
 function showModalSpinner() {
@@ -332,7 +360,7 @@ function deleteSpecificCookie(target) {
     let allBeerObjects = response;
     let favoriteBeers = findFavoriteBeers(allBeerObjects);
     insertModalContent(favoriteBeers);
-  });
+  }).catch((err) => showModalError(err));
 }
 
 const sendDataModal = document.querySelector("#submit-modal");
@@ -392,8 +420,6 @@ async function postFavoriteList(target, icon) {
     }
     showFetchConfirmation("Succesfully sent list", target.getAttribute("id"), icon);
   } catch (err) {
-    // target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
-    // target.classList.add("failed");
     showFetchFailure(err, target.getAttribute("id"), icon);
   }
 }
@@ -556,24 +582,24 @@ const themeContainer = document.querySelector(".theme");
 themeContainer.addEventListener("click", (event) => {
   const target = event.target.closest(".theme-button");
 
-  if(!target || !themeContainer.contains(target)) {
+  if (!target || !themeContainer.contains(target)) {
     return;
   }
 
   let chosenTheme = target.getAttribute("id");
-  
+
   setTheme(chosenTheme);
 });
 
 function setTheme(chosenTheme) {
-  const mainSCSS = document.querySelector("link[title=\"main\"]");
-  const darkSCSS = document.querySelector("link[title=\"dark\"]");
-  const lightSCSS = document.querySelector("link[title=\"light\"]");
+  const mainSCSS = document.querySelector('link[title="main"]');
+  const darkSCSS = document.querySelector('link[title="dark"]');
+  const lightSCSS = document.querySelector('link[title="light"]');
   const darkLink = new URL(darkSCSS.href).pathname;
   const lighLink = new URL(lightSCSS.href).pathname;
-  
+
   localStorage.setItem("theme", chosenTheme);
-  switch(chosenTheme) {
+  switch (chosenTheme) {
     case "dark":
       mainSCSS.href = darkLink;
       break;
@@ -599,17 +625,23 @@ maltFilter.addEventListener("change", () => {
   optionToSelect.selected = true;
 
   if (maltFilter.value === "All" || maltFilter.value === undefined) {
-    fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
-      beerObjects = response;
-      insertElements(response, amountOfItems.value, 1);
-    });
+    fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
+      .then((response) => {
+        beerObjects = response;
+        insertElements(response, amountOfItems.value, 1);
+      })
+      .catch((err) => {
+        showCardError(err);
+      });
   } else {
-    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?malt=${maltFilter.value}&per_page=80&page=`).then(
-      (response) => {
+    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?malt=${maltFilter.value}&per_page=80&page=`)
+      .then((response) => {
         beerObjects = response;
         insertElements(beerObjects, amountOfItems.value, 1);
-      }
-    );
+      })
+      .catch((err) => {
+        showCardError(err);
+      });
   }
 });
 
@@ -619,12 +651,14 @@ sortForm.addEventListener("submit", (e) => {
 
   if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
     let searchInputFormatted = searchInput.value.replace(/\s/g, "_");
-    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`).then(
-      (response) => {
+    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`)
+      .then((response) => {
         beerObjects = response;
         insertElements(beerObjects, amountOfItems.value, 1);
-      }
-    );
+      })
+      .catch((err) => {
+        showCardError(err);
+      });
   } else {
     window.location.reload();
   }
