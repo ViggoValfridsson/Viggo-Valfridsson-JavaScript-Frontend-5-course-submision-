@@ -14,6 +14,7 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   });
 
 (function addEventListeners() {
+  const homeButton = document.querySelector(".home-button");
   const cardContainer = document.querySelector(".card-container");
   const showListButton = document.querySelector("#favorite-list");
   const clearCookiesButton = document.querySelector("#clear-cookies-button");
@@ -24,6 +25,10 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   const amountOfItems = document.querySelector("#amount");
   const maltFilter = document.querySelector("#filter-by-malt");
   const sortOptions = document.querySelector("#sort-by");
+
+  homeButton.addEventListener("click", () => {
+    window.location.reload();
+  });
 
   sortForm.addEventListener("submit", (e) => {
     let searchInput = document.querySelector("#search-by-name");
