@@ -193,6 +193,10 @@ header {
 
 body {
   background-color: c.$lighter-page-background;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .sort-settings {
@@ -333,6 +337,23 @@ body {
   }
 }
 
+footer {
+  height: 8rem;
+  margin-top: 1rem;
+  background-color: c.$dark-page-background;
+  border-top: 1px solid c.$border-color;
+  color: c.$text-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  h4 {
+    font-size: 1.5rem;
+    font-weight: 350;
+    text-align: center;
+    margin: 0;
+  }
+}
+
 @media (min-width: 390px) {
   .search-and-sort .input-group {
     input {
@@ -342,6 +363,10 @@ body {
 }
 
 @media (min-width: 576px) {
+  footer h4 {
+    font-size: 2rem;
+    font-family: 300;
+  }
   .modal-content button {
     height: 2.5rem;
   }
