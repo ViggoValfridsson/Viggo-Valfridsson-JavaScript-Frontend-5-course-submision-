@@ -1,4 +1,5 @@
 "use strict";
+
 import { setCookie, getCookie, deleteCookie } from "./cookies";
 
 let beerObjects;
@@ -11,6 +12,182 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   .catch((err) => {
     showCardError(err);
   });
+
+(function addEventListeners() {
+  const cardContainer = document.querySelector(".card-container");
+  const showListButton = document.querySelector("#favorite-list");
+  const clearCookiesButton = document.querySelector("#clear-cookies-button");
+  const themeContainer = document.querySelector(".theme");
+  const modalBody = document.querySelector(".modal-body");
+  const sendDataModal = document.querySelector("#submit-modal");
+  const sortForm = document.querySelector(".sort-settings");
+  const amountOfItems = document.querySelector("#amount");
+  const maltFilter = document.querySelector("#filter-by-malt");
+  const sortOptions = document.querySelector("#sort-by");
+
+  sortForm.addEventListener("submit", (e) => {
+    let searchInput = document.querySelector("#search-by-name");
+    e.preventDefault();
+
+    if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
+      let searchInputFormatted = searchInput.value.replace(/\s/g, "_");
+      fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`)
+        .then((response) => {
+          beerObjects = response;
+          insertElements(beerObjects, amountOfItems.value, 1);
+        })
+        .catch((err) => {
+          showCardError(err);
+        });
+    } else {
+      window.location.reload();
+    }
+  });
+
+  amountOfItems.addEventListener("change", () => {
+    insertElements(beerObjects, amountOfItems.value, 1);
+  });
+
+  maltFilter.addEventListener("change", () => {
+    const text = "Sort";
+    const options = Array.from(sortOptions.options);
+    const optionToSelect = options.find((item) => item.text === text);
+    optionToSelect.selected = true;
+
+    if (maltFilter.value === "All" || maltFilter.value === undefined) {
+      fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
+        .then((response) => {
+          beerObjects = response;
+          insertElements(response, amountOfItems.value, 1);
+        })
+        .catch((err) => {
+          showCardError(err);
+        });
+    } else {
+      fetchAndReturnObject(`https://api.punkapi.com/v2/beers?malt=${maltFilter.value}&per_page=80&page=`)
+        .then((response) => {
+          beerObjects = response;
+          insertElements(beerObjects, amountOfItems.value, 1);
+        })
+        .catch((err) => {
+          showCardError(err);
+        });
+    }
+  });
+
+  sortOptions.addEventListener("change", () => {
+    switch (sortOptions.value) {
+      case "A-Z":
+        arraySortAlphabet();
+        insertElements(beerObjects, amountOfItems.value, 1);
+        break;
+      case "Z-A":
+        arraySortReverseAlphabet();
+        insertElements(beerObjects, amountOfItems.value, 1);
+        break;
+      case "Newest":
+        arraySortByNew();
+        insertElements(beerObjects, amountOfItems.value, 1);
+        break;
+      case "Oldest":
+        arraySortByOldest();
+        insertElements(beerObjects, amountOfItems.value, 1);
+        break;
+    }
+  });
+
+  cardContainer.addEventListener("click", (event) => {
+    let target = event.target.closest(".button-favorites");
+
+    if (!target || !cardContainer.contains(target)) {
+      return;
+    }
+
+    buttonFlash(target);
+    let targetId = target.getAttribute("id");
+    targetId = targetId.replace(/\D/g, "");
+
+    let cookie = getCookie("favoriteList");
+
+    if (cookie) {
+      cookie += "," + targetId;
+    } else {
+      cookie = targetId;
+    }
+
+    setCookie("favoriteList", cookie, { secure: true, "max-age": 31536000, samesite: "lax" });
+  });
+
+  showListButton.addEventListener("click", () => {
+    showModalSpinner(modalBody);
+    fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
+      .then((response) => {
+        let allBeerObjects = response;
+        let favoriteBeers = findFavoriteBeers(allBeerObjects);
+        insertModalContent(favoriteBeers);
+      })
+      .catch((err) => showModalError(err));
+  });
+
+  clearCookiesButton.addEventListener("click", () => {
+    deleteCookie("favoriteList");
+    insertModalContent();
+  });
+
+  themeContainer.addEventListener("click", (event) => {
+    const target = event.target.closest(".theme-button");
+
+    if (!target || !themeContainer.contains(target)) {
+      return;
+    }
+
+    let chosenTheme = target.getAttribute("id");
+
+    setTheme(chosenTheme);
+  });
+
+  modalBody.addEventListener("click", (event) => {
+    let target = event.target.closest(".delete-beer");
+
+    if (!target) {
+      return;
+    }
+
+    deleteSpecificCookie(target);
+  });
+
+  sendDataModal.addEventListener("click", (event) => {
+    const target = event.target.closest(".fetch-button");
+    let postIcon = "<i class='bi bi-send'></i>";
+    let getIcon = "<i class='bi bi-file-arrow-down'></i>";
+    let putIcon = "<i class='bi bi-arrow-clockwise'></i>";
+    let deleteIcon = "<i class='bi bi-trash3'></i>";
+
+    if (!target) {
+      return;
+    }
+
+    let targetId = target.getAttribute("id");
+
+    switch (targetId) {
+      case "fetch-post-button":
+        postFavoriteList(target, postIcon);
+        break;
+      case "fetch-get-button":
+        if (target.closest("#get-row").classList.contains("showing-response")) {
+          return;
+        }
+        getFavoriteListFromServer(target, getIcon);
+        break;
+      case "fetch-put-button":
+        putFavoriteList(target, putIcon);
+        break;
+      case "fetch-delete-button":
+        deleteFavoriteList(target, deleteIcon);
+        break;
+    }
+  });
+})();
 
 async function fetchAndReturnObject(url) {
   let completeArray = [];
@@ -29,9 +206,9 @@ async function fetchAndReturnObject(url) {
   return completeArray;
 }
 
-function addDateToObjects(beerObjects) {
-  for (let i = 0; i < beerObjects.length; i++) {
-    let beerDateString = beerObjects[i].first_brewed;
+function addDateToObjects(completeBeerArray) {
+  for (let i = 0; i < completeBeerArray.length; i++) {
+    let beerDateString = completeBeerArray[i].first_brewed;
     let dateObject = new Date();
 
     if (beerDateString.length === 7) {
@@ -43,7 +220,7 @@ function addDateToObjects(beerObjects) {
       let yearString = beerDateString.slice(0, 5);
       dateObject.setFullYear(+yearString, 11, 31);
     }
-    beerObjects[i].date = dateObject;
+    completeBeerArray[i].date = dateObject;
   }
 }
 
@@ -184,30 +361,6 @@ function showModalError(err) {
   `;
 }
 
-let cardContainer = document.querySelector(".card-container");
-
-cardContainer.addEventListener("click", (event) => {
-  let target = event.target.closest(".button-favorites");
-
-  if (!target || !cardContainer.contains(target)) {
-    return;
-  }
-
-  buttonFlash(target);
-  let targetId = target.getAttribute("id");
-  targetId = targetId.replace(/\D/g, "");
-
-  let cookie = getCookie("favoriteList");
-
-  if (cookie) {
-    cookie += "," + targetId;
-  } else {
-    cookie = targetId;
-  }
-
-  setCookie("favoriteList", cookie, { secure: true, "max-age": 31536000, samesite: "lax" });
-});
-
 function buttonFlash(target) {
   target.classList.add("active-button");
   target.innerHTML = "&#10003 Added to favorites";
@@ -218,33 +371,14 @@ function buttonFlash(target) {
   }, 700);
 }
 
-const showListButton = document.querySelector("#favorite-list");
-const clearCookiesButton = document.querySelector("#clear-cookies-button");
-
-showListButton.addEventListener("click", () => {
-  showModalSpinner();
-  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
-    .then((response) => {
-      let allBeerObjects = response;
-      let favoriteBeers = findFavoriteBeers(allBeerObjects);
-      insertModalContent(favoriteBeers);
-    })
-    .catch((err) => showModalError(err));
-});
-
-function showModalSpinner() {
-  modalBody.innerHTML = `  
+function showModalSpinner(modalElem) {
+  modalElem.innerHTML = `  
   <div class="spinner-container">
     <div class="spinner-border spinner-border-sm text-white" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>`;
 }
-
-clearCookiesButton.addEventListener("click", () => {
-  deleteCookie("favoriteList");
-  insertModalContent();
-});
 
 function findFavoriteBeers(allBeerObjects) {
   let currentCookies = getCookie("favoriteList");
@@ -314,18 +448,6 @@ function insertModalContent(favoriteObjects) {
   }
 }
 
-let modalBody = document.querySelector(".modal-body");
-
-modalBody.addEventListener("click", (event) => {
-  let target = event.target.closest(".delete-beer");
-
-  if (!target) {
-    return;
-  }
-
-  deleteSpecificCookie(target);
-});
-
 function deleteSpecificCookie(target) {
   let deleteId = target.getAttribute("id");
   deleteId = deleteId.replace(/\D/g, "");
@@ -341,46 +463,14 @@ function deleteSpecificCookie(target) {
   }
   newCookie = newCookie.toString();
   setCookie("favoriteList", newCookie, { secure: true, "max-age": 31536000, samesite: "lax" });
-  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=").then((response) => {
-    let allBeerObjects = response;
-    let favoriteBeers = findFavoriteBeers(allBeerObjects);
-    insertModalContent(favoriteBeers);
-  }).catch((err) => showModalError(err));
+  fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
+    .then((response) => {
+      let allBeerObjects = response;
+      let favoriteBeers = findFavoriteBeers(allBeerObjects);
+      insertModalContent(favoriteBeers);
+    })
+    .catch((err) => showModalError(err));
 }
-
-const sendDataModal = document.querySelector("#submit-modal");
-
-sendDataModal.addEventListener("click", (event) => {
-  const target = event.target.closest(".fetch-button");
-  let postIcon = "<i class='bi bi-send'></i>";
-  let getIcon = "<i class='bi bi-file-arrow-down'></i>";
-  let putIcon = "<i class='bi bi-arrow-clockwise'></i>";
-  let deleteIcon = "<i class='bi bi-trash3'></i>";
-
-  if (!target) {
-    return;
-  }
-
-  let targetId = target.getAttribute("id");
-
-  switch (targetId) {
-    case "fetch-post-button":
-      postFavoriteList(target, postIcon);
-      break;
-    case "fetch-get-button":
-      if (target.closest("#get-row").classList.contains("showing-response")) {
-        return;
-      }
-      getFavoriteListFromServer(target, getIcon);
-      break;
-    case "fetch-put-button":
-      putFavoriteList(target, putIcon);
-      break;
-    case "fetch-delete-button":
-      deleteFavoriteList(target, deleteIcon);
-      break;
-  }
-});
 
 async function postFavoriteList(target, icon) {
   insertButtonSpinner(target);
@@ -478,9 +568,9 @@ async function deleteFavoriteList(target, icon) {
 }
 
 async function showFetchedList(list) {
-  let getRow = document.querySelector("#get-row");
-  let oldH2 = document.querySelector("#get-row h2");
-  let div = document.createElement("div");
+  const getRow = document.querySelector("#get-row");
+  const oldH2 = document.querySelector("#get-row h2");
+  const div = document.createElement("div");
   oldH2.remove();
   getRow.classList.add("showing-response");
 
@@ -519,6 +609,8 @@ function insertButtonSpinner(target) {
 }
 
 function showFetchConfirmation(message, targetId, icon) {
+  const sendDataModal = document.querySelector("#submit-modal");
+
   document.querySelector(`#${targetId}`).innerHTML = "&#10003";
 
   sendDataModal.innerHTML += `
@@ -534,7 +626,9 @@ function showFetchConfirmation(message, targetId, icon) {
 }
 
 function showFetchFailure(err, targetId, icon) {
-  let target = document.querySelector(`#${targetId}`);
+  const sendDataModal = document.querySelector("#submit-modal");
+  const target = document.querySelector(`#${targetId}`);
+
   target.innerHTML = "<i class='bi bi-exclamation-triangle'></i>";
   target.classList.add("failed");
   sendDataModal.innerHTML += `
@@ -552,7 +646,6 @@ function showFetchFailure(err, targetId, icon) {
 }
 
 (function checkTheme() {
-  //localStorage.clear();
   let theme = localStorage.getItem("theme");
 
   if (theme === "light") {
@@ -561,20 +654,6 @@ function showFetchFailure(err, targetId, icon) {
     setTheme("dark");
   }
 })();
-
-const themeContainer = document.querySelector(".theme");
-
-themeContainer.addEventListener("click", (event) => {
-  const target = event.target.closest(".theme-button");
-
-  if (!target || !themeContainer.contains(target)) {
-    return;
-  }
-
-  let chosenTheme = target.getAttribute("id");
-
-  setTheme(chosenTheme);
-});
 
 function setTheme(chosenTheme) {
   const mainSCSS = document.querySelector('link[title="main"]');
@@ -594,85 +673,6 @@ function setTheme(chosenTheme) {
   }
 }
 
-const sortForm = document.querySelector(".sort-settings");
-const amountOfItems = document.querySelector("#amount");
-const maltFilter = document.querySelector("#filter-by-malt");
-const sortOptions = document.querySelector("#sort-by");
-
-amountOfItems.addEventListener("change", () => {
-  insertElements(beerObjects, amountOfItems.value, 1);
-});
-
-maltFilter.addEventListener("change", () => {
-  const text = "Sort";
-  const options = Array.from(sortOptions.options);
-  const optionToSelect = options.find((item) => item.text === text);
-  optionToSelect.selected = true;
-
-  if (maltFilter.value === "All" || maltFilter.value === undefined) {
-    fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
-      .then((response) => {
-        beerObjects = response;
-        insertElements(response, amountOfItems.value, 1);
-      })
-      .catch((err) => {
-        showCardError(err);
-      });
-  } else {
-    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?malt=${maltFilter.value}&per_page=80&page=`)
-      .then((response) => {
-        beerObjects = response;
-        insertElements(beerObjects, amountOfItems.value, 1);
-      })
-      .catch((err) => {
-        showCardError(err);
-      });
-  }
-});
-
-sortForm.addEventListener("submit", (e) => {
-  let searchInput = document.querySelector("#search-by-name");
-  e.preventDefault();
-
-  if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
-    let searchInputFormatted = searchInput.value.replace(/\s/g, "_");
-    fetchAndReturnObject(`https://api.punkapi.com/v2/beers?beer_name=${searchInputFormatted}&per_page=80&page=`)
-      .then((response) => {
-        beerObjects = response;
-        insertElements(beerObjects, amountOfItems.value, 1);
-      })
-      .catch((err) => {
-        showCardError(err);
-      });
-  } else {
-    window.location.reload();
-  }
-});
-
-sortOptions.addEventListener("change", () => {
-  //funktion med en switch case. Beroende på switch case sortera
-  //beerObjects arrayen på olika sätt.
-  //behöver lista ut hur man sorterar från object properties
-  switch (sortOptions.value) {
-    case "A-Z":
-      arraySortAlphabet();
-      insertElements(beerObjects, amountOfItems.value, 1);
-      break;
-    case "Z-A":
-      arraySortReverseAlphabet();
-      insertElements(beerObjects, amountOfItems.value, 1);
-      break;
-    case "Newest":
-      arraySortByNew();
-      insertElements(beerObjects, amountOfItems.value, 1);
-      break;
-    case "Oldest":
-      arraySortByOldest();
-      insertElements(beerObjects, amountOfItems.value, 1);
-      break;
-  }
-});
-
 function arraySortAlphabet() {
   beerObjects.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 }
@@ -690,6 +690,7 @@ function arraySortByOldest() {
 }
 
 function changePage(button) {
+  const amountOfItems = document.querySelector("#amount");
   let pageToSwitch = button.getAttribute("id");
   pageToSwitch = pageToSwitch.replace(/\D/g, "");
 
