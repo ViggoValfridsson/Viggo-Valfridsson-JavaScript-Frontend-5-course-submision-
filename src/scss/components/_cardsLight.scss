@@ -1,0 +1,79 @@
+@use "../abstracts/lightColors" as c;
+@use "../abstracts/animations";
+
+.card {
+  margin: 1rem;
+  width: 70%;
+  background-color: c.$item-background;
+  color: c.$text-color;
+  padding-top: 1rem;
+  border-radius: 10px;
+  border: 1px solid c.$border-color;
+  @include animations.grow-middle;
+  .card-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .img-wrapper {
+    height: 14rem;
+    margin: 0 1rem;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+  }
+  img {
+    max-height: 100%;
+    width: auto;
+  }
+  .card-title {
+    text-align: center;
+  }
+  .tagline {
+    text-align: center;
+  }
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  .btn {
+    background-color: c.$button-color;
+    color: #e0e0e0;
+    width: 11rem;
+    &:hover, &:focus {
+      background-color: c.$button-color-hover;
+    }
+    &:focus {
+      outline: 1px solid #4D90FE;
+    }
+  }
+  .active-button {
+    background-color: c.$button-active;
+    &:hover {
+      background-color: c.$button-active;
+    }
+  }
+}
+
+@media (min-width: 690px) {
+  .card {
+    width: 45%;
+    height: 50rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  .card {
+    width: 34%;
+    height: 50rem;
+  }
+}
+
+@media (min-width: 1330px) {
+  .card {
+    width: 18rem;
+    height: 50rem;
+  }
+}
+
