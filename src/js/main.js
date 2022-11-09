@@ -12,9 +12,6 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
     showCardError(err);
   });
 
-//lägg till felhantering!
-//fetchar och retunerar json objekt
-//funktionen gör oändliga request på 404. T.ex om man söker på något som inte finns
 async function fetchAndReturnObject(url) {
   let completeArray = [];
   let moreObjectsStillExist = true;
@@ -29,8 +26,6 @@ async function fetchAndReturnObject(url) {
     addDateToObjects(completeArray);
     i++;
   }
-  // console.log("length: " + completeArray.length);
-  // console.log(completeArray);
   return completeArray;
 }
 
@@ -52,9 +47,6 @@ function addDateToObjects(beerObjects) {
   }
 }
 
-//Lägg till parametrar för hur många items och från vilket item den ska börja
-//Lägger till cards från Json
-//lägger till buttons
 function insertElements(array, amount, page) {
   let cardContainer = document.querySelector(".card-container");
 
@@ -158,7 +150,7 @@ function insertElements(array, amount, page) {
   cardContainer.innerHTML += buttonString;
 
   let pageButtonContainer = document.querySelector(".page-buttons");
-  //kanske bättre att använde pointerdown
+
   pageButtonContainer.addEventListener("click", (event) => {
     let target = event.target.closest("button");
 
@@ -194,11 +186,6 @@ function showModalError(err) {
 
 let cardContainer = document.querySelector(".card-container");
 
-//deleteCookie("favoriteList");
-
-//creates cookie "favoriteList". Value is a string with id's separated by a comma
-//need to check if beer already exists and doesnt add it again.
-//needs to store cookie in a way that allows for indivudual deletions
 cardContainer.addEventListener("click", (event) => {
   let target = event.target.closest(".button-favorites");
 
@@ -207,11 +194,9 @@ cardContainer.addEventListener("click", (event) => {
   }
 
   buttonFlash(target);
-  // ta ut id från button #id attribut.
   let targetId = target.getAttribute("id");
   targetId = targetId.replace(/\D/g, "");
 
-  //ta in cookies nuvarnde värde
   let cookie = getCookie("favoriteList");
 
   if (cookie) {
@@ -688,12 +673,10 @@ sortOptions.addEventListener("change", () => {
   }
 });
 
-//Sorterar array efter objekt name property bokstavsordning
 function arraySortAlphabet() {
   beerObjects.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 }
 
-//Sorterar array efter objekt name property baklänges bokstavsordning
 function arraySortReverseAlphabet() {
   beerObjects.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
 }
