@@ -4,6 +4,8 @@ import { setCookie, getCookie, deleteCookie } from "./cookies";
 
 let beerObjects;
 
+checkTheme();
+
 fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   .then((response) => {
     beerObjects = response;
@@ -11,27 +13,42 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   })
   .catch((err) => {
     showCardError(err);
+  })
+  .then(() => {
+    addEventListeners();
   });
 
-(function addEventListeners() {
+function addEventListeners() {
   const homeButton = document.querySelector(".home-button");
-  const cardContainer = document.querySelector(".card-container");
-  const showListButton = document.querySelector("#favorite-list");
-  const clearCookiesButton = document.querySelector("#clear-cookies-button");
   const themeContainer = document.querySelector(".theme");
-  const modalBody = document.querySelector(".modal-body");
-  const sendDataModal = document.querySelector("#submit-modal");
   const sortForm = document.querySelector(".sort-settings");
   const amountOfItems = document.querySelector("#amount");
   const maltFilter = document.querySelector("#filter-by-malt");
   const sortOptions = document.querySelector("#sort-by");
+  const cardContainer = document.querySelector(".card-container");
+  const showListButton = document.querySelector("#favorite-list");
+  const clearCookiesButton = document.querySelector("#clear-cookies-button");
+  const modalBody = document.querySelector(".modal-body");
+  const sendDataModal = document.querySelector("#submit-modal");
 
   homeButton.addEventListener("click", () => {
     window.location.reload();
   });
 
+  themeContainer.addEventListener("click", (event) => {
+    const target = event.target.closest(".theme-button");
+
+    if (!target || !themeContainer.contains(target)) {
+      return;
+    }
+
+    let chosenTheme = target.getAttribute("id");
+    setTheme(chosenTheme);
+  });
+
   sortForm.addEventListener("submit", (e) => {
     const searchInput = document.querySelector("#search-by-name");
+
     e.preventDefault();
 
     if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
@@ -57,6 +74,7 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
     const text = "Sort";
     const options = Array.from(sortOptions.options);
     const optionToSelect = options.find((item) => item.text === text);
+
     optionToSelect.selected = true;
 
     if (maltFilter.value === "All" || maltFilter.value === undefined) {
@@ -103,16 +121,16 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
 
   cardContainer.addEventListener("click", (event) => {
     let target = event.target.closest(".button-favorites");
+    let cookie = getCookie("favoriteList");
 
     if (!target || !cardContainer.contains(target)) {
       return;
     }
 
     buttonFlash(target);
+
     let targetId = target.getAttribute("id");
     targetId = targetId.replace(/\D/g, "");
-
-    let cookie = getCookie("favoriteList");
 
     if (cookie) {
       cookie += "," + targetId;
@@ -137,18 +155,6 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   clearCookiesButton.addEventListener("click", () => {
     deleteCookie("favoriteList");
     insertModalContent();
-  });
-
-  themeContainer.addEventListener("click", (event) => {
-    const target = event.target.closest(".theme-button");
-
-    if (!target || !themeContainer.contains(target)) {
-      return;
-    }
-
-    let chosenTheme = target.getAttribute("id");
-
-    setTheme(chosenTheme);
   });
 
   modalBody.addEventListener("click", (event) => {
@@ -192,22 +198,56 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
         break;
     }
   });
-})();
+}
+
+function checkTheme() {
+  let theme = localStorage.getItem("theme");
+
+  if (theme === "light") {
+    setTheme("light");
+  } else {
+    setTheme("dark");
+  }
+}
+
+function setTheme(chosenTheme) {
+  const mainSCSS = document.querySelector("link[title=\"main\"]");
+  const darkSCSS = document.querySelector("link[title=\"dark\"]");
+  const lightSCSS = document.querySelector("link[title=\"light\"]");
+  const darkLink = new URL(darkSCSS.href).pathname;
+  const lighLink = new URL(lightSCSS.href).pathname;
+
+  localStorage.setItem("theme", chosenTheme);
+  switch (chosenTheme) {
+    case "dark":
+      mainSCSS.href = darkLink;
+      break;
+    case "light":
+      mainSCSS.href = lighLink;
+      break;
+  }
+}
 
 async function fetchAndReturnObject(url) {
   let completeArray = [];
   let moreObjectsStillExist = true;
   let i = 1;
+
   while (moreObjectsStillExist) {
     let response = await fetch(url + i);
     let json = await response.json();
+
     if (json.length == 0) {
       moreObjectsStillExist = false;
     }
+
     completeArray = completeArray.concat(json);
+
     addDateToObjects(completeArray);
+
     i++;
   }
+
   return completeArray;
 }
 
@@ -221,10 +261,12 @@ function addDateToObjects(completeBeerArray) {
       let monthString = beerDateString.slice(0, 2);
       dateObject.setFullYear(+yearString, +monthString - 1, 1);
     }
+
     if (beerDateString.length === 4) {
       let yearString = beerDateString.slice(0, 5);
       dateObject.setFullYear(+yearString, 11, 31);
     }
+
     completeBeerArray[i].date = dateObject;
   }
 }
@@ -238,6 +280,7 @@ function insertElements(array, amount, page) {
       <h2>We could not find any beers matching your request.</h2>
       <p>Check if your spelling is correct. If you believe this is an error feel free to contact us.</p>
     </div>`;
+
     return;
   }
 
@@ -271,13 +314,14 @@ function insertElements(array, amount, page) {
     let alcoholContent = beer.abv + "%";
     let ibu = beer.ibu ? beer.ibu : "Unknown";
     let beerDescription = beer.description;
+    let maltArray = beer.ingredients.malt;
+    let maltString = "";
+    let beerId = beer.id;
+
     if (beerDescription.length > 390) {
       beerDescription = beerDescription.slice(0, 350);
       beerDescription += "...";
     }
-    let maltArray = beer.ingredients.malt;
-    let maltString = "";
-    let beerId = beer.id;
 
     for (let i = 0; i < maltArray.length; i++) {
       let name = maltArray[i].name;
@@ -316,8 +360,10 @@ function insertElements(array, amount, page) {
 
   let backPageNumber = page - 1 > 0 ? page - 1 : 1;
   let highestAllowedPage;
+
   let buttonString = `<div class="page-buttons">
   <button id="forward-${backPageNumber} title="go-back-page-button" type="button" class="pageBack button-arrow"><i class="bi bi-caret-left-fill"></i></button><div class="numbered-buttons">`;
+
   for (let i = 1; i <= amountOfPages; i++) {
     if (i === page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button active">${i}</button>`;
@@ -326,9 +372,11 @@ function insertElements(array, amount, page) {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
     }
   }
+
   let forwardPageNumber = page + 1 < highestAllowedPage ? page + 1 : highestAllowedPage;
   buttonString += `</div><button id="forward-${forwardPageNumber}" title="go-forward-page-button" type="button" class="pageForward button-arrow"><i class="bi bi-caret-right-fill"></i></button>
   </div>`;
+
   cardContainer.innerHTML += buttonString;
 
   const pageButtonContainer = document.querySelector(".page-buttons");
@@ -339,8 +387,20 @@ function insertElements(array, amount, page) {
     if (!target || !pageButtonContainer.contains(target)) {
       return;
     }
+
     changePage(target);
   });
+}
+
+function changePage(button) {
+  const amountOfItems = document.querySelector("#amount");
+  let pageToSwitch = button.getAttribute("id");
+
+  pageToSwitch = pageToSwitch.replace(/\D/g, "");
+
+  insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
+
+  document.querySelector("#top").scrollIntoView();
 }
 
 function showCardError(err) {
@@ -353,17 +413,20 @@ function showCardError(err) {
   </div>`;
 }
 
-function showModalError(err) {
-  const modalBody = document.querySelector("#favoriteModal .modal-body");
+function arraySortAlphabet() {
+  beerObjects.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+}
 
-  modalBody.innerHTML = `
-  <div class="modal-error">
-    <div class="error-background">
-      <h2 class="error-title">${err}</h2>
-      <p class="error-tip">Try reloading the page!</p>
-    </div>
-  </div>
-  `;
+function arraySortReverseAlphabet() {
+  beerObjects.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
+}
+
+function arraySortByNew() {
+  beerObjects.sort((a, b) => (a.date < b.date ? 1 : b.date > a.date ? -1 : 0));
+}
+
+function arraySortByOldest() {
+  beerObjects.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
 }
 
 function buttonFlash(target) {
@@ -385,30 +448,14 @@ function showModalSpinner(modalElem) {
   </div>`;
 }
 
-function findFavoriteBeers(allBeerObjects) {
-  let currentCookies = getCookie("favoriteList");
-  let favoriteObjects = [];
-
-  if (!currentCookies) {
-    return false;
-  }
-
-  currentCookies = currentCookies.split(",");
-
-  for (let i = 0; i < currentCookies.length; i++) {
-    favoriteObjects.push(allBeerObjects.find((item) => item.id == currentCookies[i]));
-  }
-  return favoriteObjects;
-}
-
 function insertModalContent(favoriteObjects) {
   const modalBody = document.querySelector(".modal-body");
 
   if (!favoriteObjects) {
     modalBody.innerHTML = `
     <h2 class="no-beer">You currently don't have any beers in your list.</h2>
-    <h3 class="lead">You can add beers by clicking the add to favorites button.</h3>
-  `;
+    <h3 class="lead">You can add beers by clicking the add to favorites button.</h3>`;
+
     return;
   }
 
@@ -453,21 +500,55 @@ function insertModalContent(favoriteObjects) {
   }
 }
 
+function findFavoriteBeers(allBeerObjects) {
+  let currentCookies = getCookie("favoriteList");
+  let currentCookiesArray = [];
+  let favoriteObjects = [];
+
+  if (!currentCookies) {
+    return false;
+  }
+
+  currentCookiesArray = currentCookies.split(",");
+
+  for (let i = 0; i < currentCookiesArray.length; i++) {
+    favoriteObjects.push(allBeerObjects.find((item) => item.id == currentCookiesArray[i]));
+  }
+
+  return favoriteObjects;
+}
+
+function showModalError(err) {
+  const modalBody = document.querySelector("#favoriteModal .modal-body");
+
+  modalBody.innerHTML = `
+  <div class="modal-error">
+    <div class="error-background">
+      <h2 class="error-title">${err}</h2>
+      <p class="error-tip">Try reloading the page!</p>
+    </div>
+  </div>
+  `;
+}
+
 function deleteSpecificCookie(target) {
   let deleteId = target.getAttribute("id");
-  deleteId = deleteId.replace(/\D/g, "");
-
   let currentCookies = getCookie("favoriteList");
-  currentCookies = currentCookies.split(",");
+  let currentCookiesArray = currentCookies.split(",");
   let newCookie = [];
 
-  for (let i = 0; i < currentCookies.length; i++) {
-    if (currentCookies[i] != deleteId) {
-      newCookie.push(currentCookies[i]);
+  deleteId = deleteId.replace(/\D/g, "");
+
+  for (let i = 0; i < currentCookiesArray.length; i++) {
+    if (currentCookiesArray[i] != deleteId) {
+      newCookie.push(currentCookiesArray[i]);
     }
   }
+
   newCookie = newCookie.toString();
+
   setCookie("favoriteList", newCookie, { secure: true, "max-age": 31536000, samesite: "lax" });
+
   fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
     .then((response) => {
       let allBeerObjects = response;
@@ -479,6 +560,7 @@ function deleteSpecificCookie(target) {
 
 async function postFavoriteList(target, icon) {
   insertButtonSpinner(target);
+
   try {
     const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
     let favoriteBeers = findFavoriteBeers(response);
@@ -498,6 +580,7 @@ async function postFavoriteList(target, icon) {
     if (post.status < 200 || post.status > 299) {
       throw new Error(post.status);
     }
+
     showFetchConfirmation("Succesfully sent list", target.getAttribute("id"), icon);
   } catch (err) {
     showFetchFailure(err, target.getAttribute("id"), icon);
@@ -506,6 +589,7 @@ async function postFavoriteList(target, icon) {
 
 async function getFavoriteListFromServer(target, icon) {
   insertButtonSpinner(target);
+
   try {
     const listFromServer = await fetch("https://jsonplaceholder.typicode.com/posts/1");
 
@@ -516,6 +600,7 @@ async function getFavoriteListFromServer(target, icon) {
     const listJson = await listFromServer.json();
 
     target.innerHTML = "&#10003";
+
     showFetchedList(listJson);
   } catch (err) {
     showFetchFailure(err, target.getAttribute("id"), icon);
@@ -524,9 +609,11 @@ async function getFavoriteListFromServer(target, icon) {
 
 async function putFavoriteList(target, icon) {
   insertButtonSpinner(target);
+
   try {
     const response = await fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=");
     let favoriteBeers = findFavoriteBeers(response);
+
     if (!favoriteBeers) {
       throw new Error("List is empty. You have to add items before sending.");
     }
@@ -542,6 +629,7 @@ async function putFavoriteList(target, icon) {
     if (put.status < 200 || put.status > 299) {
       throw new Error(put.status);
     }
+
     const jsonPut = await put.json();
 
     let amountOfItems = Object.keys(jsonPut).length - 1;
@@ -558,6 +646,7 @@ async function putFavoriteList(target, icon) {
 
 async function deleteFavoriteList(target, icon) {
   insertButtonSpinner(target);
+
   if (confirm("Are you sure that you wan't to remove your list from our servers?")) {
     try {
       fetch("https://jsonplaceholder.typicode.com/posts/1", {
@@ -576,6 +665,7 @@ async function showFetchedList(list) {
   const getRow = document.querySelector("#get-row");
   const oldH2 = document.querySelector("#get-row h2");
   const div = document.createElement("div");
+
   oldH2.remove();
   getRow.classList.add("showing-response");
 
@@ -595,6 +685,7 @@ async function showFetchedList(list) {
 
   setTimeout(() => {
     const getRow = document.querySelector("#get-row");
+
     getRow.classList.remove("showing-response");
     getRow.innerHTML = `
     <h2 id="fetch-get" class="fetch-method">Check what information we have about your list on our servers</h2>
@@ -642,63 +733,11 @@ function showFetchFailure(err, targetId, icon) {
     <p class="lead">Please try again</p>
   </div>
   `;
+
   setTimeout(() => {
     document.querySelector(".fetch-alert").remove();
     const target = document.querySelector(`#${targetId}`);
     target.classList.remove("failed");
     target.innerHTML = icon;
   }, 3000);
-}
-
-(function checkTheme() {
-  let theme = localStorage.getItem("theme");
-
-  if (theme === "light") {
-    setTheme("light");
-  } else {
-    setTheme("dark");
-  }
-})();
-
-function setTheme(chosenTheme) {
-  const mainSCSS = document.querySelector("link[title=\"main\"]");
-  const darkSCSS = document.querySelector("link[title=\"dark\"]");
-  const lightSCSS = document.querySelector("link[title=\"light\"]");
-  const darkLink = new URL(darkSCSS.href).pathname;
-  const lighLink = new URL(lightSCSS.href).pathname;
-
-  localStorage.setItem("theme", chosenTheme);
-  switch (chosenTheme) {
-    case "dark":
-      mainSCSS.href = darkLink;
-      break;
-    case "light":
-      mainSCSS.href = lighLink;
-      break;
-  }
-}
-
-function arraySortAlphabet() {
-  beerObjects.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
-}
-
-function arraySortReverseAlphabet() {
-  beerObjects.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
-}
-
-function arraySortByNew() {
-  beerObjects.sort((a, b) => (a.date < b.date ? 1 : b.date > a.date ? -1 : 0));
-}
-
-function arraySortByOldest() {
-  beerObjects.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
-}
-
-function changePage(button) {
-  const amountOfItems = document.querySelector("#amount");
-  let pageToSwitch = button.getAttribute("id");
-  pageToSwitch = pageToSwitch.replace(/\D/g, "");
-
-  insertElements(beerObjects, amountOfItems.value, +pageToSwitch);
-  document.querySelector("#top").scrollIntoView();
 }

@@ -1,3 +1,5 @@
+"use strict";
+
 export function setCookie(name, value, options = {}) {
   options = {
     path: "/",
