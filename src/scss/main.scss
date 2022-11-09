@@ -161,10 +161,13 @@ header {
     justify-content: space-between;
     min-height: 6rem;
   }
-  h1 {
+  .home-div {
     width: 70%;
-    color: c.$text-color;
     margin: 1rem0;
+  }
+  h1 {
+    color: c.$text-color;
+    text-align: start;
   }
   button {
     min-height: 6rem;

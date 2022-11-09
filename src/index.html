@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link title="main" rel="stylesheet" href="scss/main.scss">
+    <link title="main" rel="stylesheet" href="scss/main.scss" />
     <link title="dark" rel="stylesheet" media="none" href="scss/main.scss" />
     <link title="light" rel="stylesheet" media="none" href="scss/main_light.scss" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
@@ -42,7 +42,6 @@
         </div>
       </div>
     </div>
-
     <div
       class="modal fade"
       id="submit-data-modal"
@@ -65,21 +64,18 @@
                 <i class="bi bi-send"></i>
               </button>
             </div>
-
             <div id="get-row" class="modal-row">
               <h2 id="fetch-get" class="fetch-method">Check what information we have about your list on our servers</h2>
               <button id="fetch-get-button" type="button" class="btn fetch-button" aria-labelledby="fetch-get">
                 <i class="bi bi-file-arrow-down"></i>
               </button>
             </div>
-
             <div class="modal-row">
               <h2 id="fetch-put" class="fetch-method">Update your list on our servers</h2>
               <button id="fetch-put-button" type="button" class="btn fetch-button" aria-labelledby="fetch-put">
                 <i class="bi bi-arrow-clockwise"></i>
               </button>
             </div>
-
             <div class="modal-row">
               <h2 id="fetch-delete" class="fetch-method">Delete list from our servers.</h2>
               <button id="fetch-delete-button" type="button" class="btn fetch-button" aria-labelledby="fetch-delete">
@@ -93,16 +89,19 @@
         </div>
       </div>
     </div>
-
     <header id="top">
       <div class="container-xxl">
-        <h1>Viggos Ölsida</h1>
+        <div class="home-div">
+          <button class="home-button">
+            <h1>Viggos Ölsida</h1>
+          </button>
+        </div>
         <div class="theme">
           <button id="dark" class="theme-button" type="button"><i class="bi bi-moon"></i>Dark</button>
           <button id="light" class="theme-button" type="button"><i class="bi bi-sun"></i>Light</button>
         </div>
         <button
-        class="show-modal-button"
+          class="show-modal-button"
           title="favorite-list"
           type="button"
           id="favorite-list"
@@ -157,13 +156,6 @@
         </select>
       </div>
       <div class="search-and-sort">
-        <!-- <input
-          id="search-by-name"
-          title="search-by-name"
-          placeholder="Search by name..."
-          type="text"
-          autocomplete="off"
-        /> -->
         <div class="input-group">
           <input
             id="search-by-name"
@@ -174,7 +166,6 @@
           />
           <button title="search" type="submit" class="input-group-text"><i class="bi bi-search"></i></button>
         </div>
-
         <select name="sort-by" title="sort-by" id="sort-by" autocomplete="off">
           <option selected disabled value="undefined">Sort</option>
           <option value="A-Z">A-Z</option>
