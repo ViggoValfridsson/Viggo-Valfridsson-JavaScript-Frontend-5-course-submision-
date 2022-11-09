@@ -5,7 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="scss/main.scss" />
+    <link title="main" rel="stylesheet" href="scss/main.scss">
+    <link title="dark" rel="stylesheet" media="none" href="scss/main.scss" />
+    <link title="light" rel="stylesheet" media="none" href="scss/main_light.scss" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
   </head>
   <body>
@@ -95,7 +97,12 @@
     <header id="top">
       <div class="container-xxl">
         <h1>Viggos Ölsida</h1>
+        <div class="theme">
+          <button id="dark" class="theme-button" type="button"><i class="bi bi-moon"></i>Dark</button>
+          <button id="light" class="theme-button" type="button"><i class="bi bi-sun"></i>Light</button>
+        </div>
         <button
+        class="show-modal-button"
           title="favorite-list"
           type="button"
           id="favorite-list"

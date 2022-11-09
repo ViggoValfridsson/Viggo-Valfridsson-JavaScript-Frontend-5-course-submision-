@@ -540,6 +540,49 @@ function showFetchFailure(err, targetId, icon) {
   }, 3000);
 }
 
+(function checkTheme() {
+  //localStorage.clear();
+  let theme = localStorage.getItem("theme");
+
+  if (theme === "light") {
+    setTheme("light");
+  } else {
+    setTheme("dark");
+  }
+})();
+
+const themeContainer = document.querySelector(".theme");
+
+themeContainer.addEventListener("click", (event) => {
+  const target = event.target.closest(".theme-button");
+
+  if(!target || !themeContainer.contains(target)) {
+    return;
+  }
+
+  let chosenTheme = target.getAttribute("id");
+  
+  setTheme(chosenTheme);
+});
+
+function setTheme(chosenTheme) {
+  const mainSCSS = document.querySelector("link[title=\"main\"]");
+  const darkSCSS = document.querySelector("link[title=\"dark\"]");
+  const lightSCSS = document.querySelector("link[title=\"light\"]");
+  const darkLink = new URL(darkSCSS.href).pathname;
+  const lighLink = new URL(lightSCSS.href).pathname;
+  
+  localStorage.setItem("theme", chosenTheme);
+  switch(chosenTheme) {
+    case "dark":
+      mainSCSS.href = darkLink;
+      break;
+    case "light":
+      mainSCSS.href = lighLink;
+      break;
+  }
+}
+
 const sortForm = document.querySelector(".sort-settings");
 const amountOfItems = document.querySelector("#amount");
 const maltFilter = document.querySelector("#filter-by-malt");
