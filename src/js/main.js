@@ -31,7 +31,7 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   });
 
   sortForm.addEventListener("submit", (e) => {
-    let searchInput = document.querySelector("#search-by-name");
+    const searchInput = document.querySelector("#search-by-name");
     e.preventDefault();
 
     if (searchInput.value != undefined && searchInput.value != null && searchInput.value != "") {
@@ -163,10 +163,10 @@ fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
 
   sendDataModal.addEventListener("click", (event) => {
     const target = event.target.closest(".fetch-button");
-    let postIcon = "<i class='bi bi-send'></i>";
-    let getIcon = "<i class='bi bi-file-arrow-down'></i>";
-    let putIcon = "<i class='bi bi-arrow-clockwise'></i>";
-    let deleteIcon = "<i class='bi bi-trash3'></i>";
+    const postIcon = "<i class='bi bi-send'></i>";
+    const getIcon = "<i class='bi bi-file-arrow-down'></i>";
+    const putIcon = "<i class='bi bi-arrow-clockwise'></i>";
+    const deleteIcon = "<i class='bi bi-trash3'></i>";
 
     if (!target) {
       return;
@@ -230,7 +230,7 @@ function addDateToObjects(completeBeerArray) {
 }
 
 function insertElements(array, amount, page) {
-  let cardContainer = document.querySelector(".card-container");
+  const cardContainer = document.querySelector(".card-container");
 
   if (array.length === 0) {
     cardContainer.innerHTML = `
@@ -287,7 +287,7 @@ function insertElements(array, amount, page) {
       maltString += name;
     }
 
-    let currentRow = document.querySelector(`.row-${rowNumber}`);
+    const currentRow = document.querySelector(`.row-${rowNumber}`);
 
     currentRow.innerHTML += `
       <div class="card">
@@ -331,7 +331,7 @@ function insertElements(array, amount, page) {
   </div>`;
   cardContainer.innerHTML += buttonString;
 
-  let pageButtonContainer = document.querySelector(".page-buttons");
+  const pageButtonContainer = document.querySelector(".page-buttons");
 
   pageButtonContainer.addEventListener("click", (event) => {
     let target = event.target.closest("button");
@@ -344,7 +344,7 @@ function insertElements(array, amount, page) {
 }
 
 function showCardError(err) {
-  let cardContainer = document.querySelector(".card-container");
+  const cardContainer = document.querySelector(".card-container");
 
   cardContainer.innerHTML = `
   <div class="fetch-error error">
@@ -594,7 +594,7 @@ async function showFetchedList(list) {
   getRow.prepend(div);
 
   setTimeout(() => {
-    let getRow = document.querySelector("#get-row");
+    const getRow = document.querySelector("#get-row");
     getRow.classList.remove("showing-response");
     getRow.innerHTML = `
     <h2 id="fetch-get" class="fetch-method">Check what information we have about your list on our servers</h2>
@@ -644,7 +644,7 @@ function showFetchFailure(err, targetId, icon) {
   `;
   setTimeout(() => {
     document.querySelector(".fetch-alert").remove();
-    let target = document.querySelector(`#${targetId}`);
+    const target = document.querySelector(`#${targetId}`);
     target.classList.remove("failed");
     target.innerHTML = icon;
   }, 3000);
