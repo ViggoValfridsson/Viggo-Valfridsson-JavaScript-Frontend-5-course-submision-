@@ -661,9 +661,9 @@ function showFetchFailure(err, targetId, icon) {
 })();
 
 function setTheme(chosenTheme) {
-  const mainSCSS = document.querySelector('link[title="main"]');
-  const darkSCSS = document.querySelector('link[title="dark"]');
-  const lightSCSS = document.querySelector('link[title="light"]');
+  const mainSCSS = document.querySelector("link[title=\"main\"]");
+  const darkSCSS = document.querySelector("link[title=\"dark\"]");
+  const lightSCSS = document.querySelector("link[title=\"light\"]");
   const darkLink = new URL(darkSCSS.href).pathname;
   const lighLink = new URL(lightSCSS.href).pathname;
 
