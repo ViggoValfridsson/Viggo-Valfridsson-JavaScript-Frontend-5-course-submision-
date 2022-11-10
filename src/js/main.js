@@ -370,6 +370,7 @@ function insertElements(array, amount, page) {
       highestAllowedPage = i;
     } else {
       buttonString += `<button id="page-${i}" type="button" class="page-button">${i}</button>`;
+      highestAllowedPage = i;
     }
   }
 
