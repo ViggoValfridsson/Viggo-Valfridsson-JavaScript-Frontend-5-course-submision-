@@ -47,6 +47,12 @@ function addEventListeners() {
   });
 
   sortForm.addEventListener("submit", (e) => {
+    const text = "Sort";
+    const options = Array.from(sortOptions.options);
+    const optionToSelect = options.find((item) => item.text === text);
+
+    optionToSelect.selected = true;
+    
     const searchInput = document.querySelector("#search-by-name");
 
     e.preventDefault();
