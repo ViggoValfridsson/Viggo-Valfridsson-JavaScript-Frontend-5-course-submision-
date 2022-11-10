@@ -278,7 +278,7 @@ function addDateToObjects(completeBeerArray) {
 }
 
 module.exports = {
-  addDateToObjects,
+  addDateToObjects
 };
 
 function insertElements(array, amount, page) {
