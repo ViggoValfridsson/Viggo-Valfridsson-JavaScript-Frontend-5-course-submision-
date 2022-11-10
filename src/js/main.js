@@ -277,6 +277,10 @@ function addDateToObjects(completeBeerArray) {
   }
 }
 
+module.exports = {
+  addDateToObjects,
+};
+
 function insertElements(array, amount, page) {
   const cardContainer = document.querySelector(".card-container");
 
