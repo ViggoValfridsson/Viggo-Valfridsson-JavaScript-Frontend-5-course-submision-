@@ -11,7 +11,6 @@ module.exports = {
 };
 
 let beerObjects;
-let userId;
 
 checkTheme();
 checkUserId();
@@ -247,13 +246,11 @@ function setTheme(chosenTheme) {
 function checkUserId() {
   if(!getCookie("userId")) {
     createUserId();
-  } else {
-    userId = getCookie("userId");
   }
 }
 
 function createUserId() {
-  userId = Math.floor(Math.random() * 1000000000);
+  let userId = Math.floor(Math.random() * 1000000000);
   setCookie("userId", userId, { secure: true, "max-age": 31536000, samesite: "lax" });
 }
 
@@ -604,7 +601,7 @@ async function postFavoriteList(target, icon) {
       body: JSON.stringify({
         title: "favoriteList",
         body: favoriteBeers,
-        userId: userId}),
+        userId: getCookie("userId")}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
@@ -656,7 +653,7 @@ async function putFavoriteList(target, icon) {
       body: JSON.stringify({
         title: "favoriteList",
         body: favoriteBeers,
-        userId: userId}),
+        userId: getCookie("userId")}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
@@ -667,6 +664,7 @@ async function putFavoriteList(target, icon) {
     }
 
     const jsonPut = await put.json();
+    console.log(jsonPut);
 
     let amountOfItems = Object.keys(jsonPut.body).length;
 
