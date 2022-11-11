@@ -10,4 +10,4 @@ You can save beers to your favorite list by clicking the "Add to favorites" butt
 In the bottom right corner of the favorite list there is an option to send in your list for statistics. When the page loads it checks the cookie "userId" and creates one if it doesn't exist. When you click "Send in list for statistics" the page performs a fetch POST request and sends the following information as JSON, the list of beers, userId and the title favoriteList. When you click "Update list on our servers" the same data is sent but in a PUT request instead. The "Check what information we have about your list on our servers" performs a GET request and displays the results inside of the modal. The "Delete list from our servers" performs a DELETE request. When a request fails an error message is shown in the bottom right corner and when it succeds a success message is shown in the same place. All requests are sent to JSONPlaceholder.
 
 ## Test
-Tests can be viewed by running npm test and opening the page in the browser.
+Tests can be viewed by running "npm test" and opening the page in the browser.
