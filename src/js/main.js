@@ -3,8 +3,10 @@
 import { setCookie, getCookie, deleteCookie } from "./cookies";
 
 let beerObjects;
+let userId;
 
 checkTheme();
+checkUserId();
 
 fetchAndReturnObject("https://api.punkapi.com/v2/beers?per_page=80&page=")
   .then((response) => {
@@ -232,6 +234,19 @@ function setTheme(chosenTheme) {
       mainSCSS.href = lighLink;
       break;
   }
+}
+
+function checkUserId() {
+  if(!getCookie("userId")) {
+    createUserId();
+  } else {
+    userId = getCookie("userId");
+  }
+}
+
+function createUserId() {
+  userId = Math.floor(Math.random() * 1000000000);
+  setCookie("userId", userId, { secure: true, "max-age": 31536000, samesite: "lax" });
 }
 
 async function fetchAndReturnObject(url) {
@@ -578,7 +593,10 @@ async function postFavoriteList(target, icon) {
 
     const post = await fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "POST",
-      body: JSON.stringify(favoriteBeers),
+      body: JSON.stringify({
+        title: "favoriteList",
+        body: favoriteBeers,
+        userId: userId}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
@@ -627,7 +645,10 @@ async function putFavoriteList(target, icon) {
 
     const put = await fetch("https://jsonplaceholder.typicode.com/posts/1", {
       method: "PUT",
-      body: JSON.stringify(favoriteBeers),
+      body: JSON.stringify({
+        title: "favoriteList",
+        body: favoriteBeers,
+        userId: userId}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
@@ -639,7 +660,7 @@ async function putFavoriteList(target, icon) {
 
     const jsonPut = await put.json();
 
-    let amountOfItems = Object.keys(jsonPut).length - 1;
+    let amountOfItems = Object.keys(jsonPut.body).length;
 
     showFetchConfirmation(
       `Succesfully updated list with ${amountOfItems} new item(s)`,
