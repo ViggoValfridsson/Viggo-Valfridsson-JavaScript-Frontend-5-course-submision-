@@ -2,6 +2,14 @@
 
 import { setCookie, getCookie, deleteCookie } from "./cookies";
 
+module.exports = {
+  addDateToObjects,
+  arraySortAlphabet,
+  arraySortReverseAlphabet,
+  arraySortByNew,
+  arraySortByOldest
+};
+
 let beerObjects;
 let userId;
 
@@ -109,19 +117,19 @@ function addEventListeners() {
   sortOptions.addEventListener("change", () => {
     switch (sortOptions.value) {
       case "A-Z":
-        arraySortAlphabet();
+        arraySortAlphabet(beerObjects);
         insertElements(beerObjects, amountOfItems.value, 1);
         break;
       case "Z-A":
-        arraySortReverseAlphabet();
+        arraySortReverseAlphabet(beerObjects);
         insertElements(beerObjects, amountOfItems.value, 1);
         break;
       case "Newest":
-        arraySortByNew();
+        arraySortByNew(beerObjects);
         insertElements(beerObjects, amountOfItems.value, 1);
         break;
       case "Oldest":
-        arraySortByOldest();
+        arraySortByOldest(beerObjects);
         insertElements(beerObjects, amountOfItems.value, 1);
         break;
     }
@@ -435,20 +443,20 @@ function showCardError(err) {
   </div>`;
 }
 
-function arraySortAlphabet() {
-  beerObjects.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+function arraySortAlphabet(arrayToSort) {
+  arrayToSort.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 }
 
-function arraySortReverseAlphabet() {
-  beerObjects.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
+function arraySortReverseAlphabet(arrayToSort) {
+  arrayToSort.sort((a, b) => (a.name < b.name ? 1 : b.name > a.name ? -1 : 0));
 }
 
-function arraySortByNew() {
-  beerObjects.sort((a, b) => (a.date < b.date ? 1 : b.date > a.date ? -1 : 0));
+function arraySortByNew(arrayToSort) {
+  arrayToSort.sort((a, b) => (a.date < b.date ? 1 : b.date > a.date ? -1 : 0));
 }
 
-function arraySortByOldest() {
-  beerObjects.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
+function arraySortByOldest(arrayToSort) {
+  arrayToSort.sort((a, b) => (a.date > b.date ? 1 : b.date > a.date ? -1 : 0));
 }
 
 function buttonFlash(target) {
