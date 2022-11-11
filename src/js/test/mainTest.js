@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const assert = require("chai").assert;
 const main = require("../main");
 
