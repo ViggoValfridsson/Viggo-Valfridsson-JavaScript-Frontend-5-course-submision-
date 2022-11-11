@@ -2,6 +2,8 @@
 
 import { setCookie, getCookie, deleteCookie } from "./cookies";
 
+module.exports = {addDateToObjects};
+
 let beerObjects;
 let userId;
 
