@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test</title>
+  <link title="main" rel="stylesheet" href="../../scss/main.scss" />
+  <link title="dark" rel="stylesheet" media="none" href="../../scss/main.scss" />
+  <link title="light" rel="stylesheet" media="none" href="../../scss/main_light.scss" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="https://unpkg.com/chai/chai.js"></script>
+  <script src="https://unpkg.com/mocha/mocha.js"></script>
+
+  <script type="module" src="../main.js"></script>
+  <script class="mocha-init">
+    mocha.setup('bdd');
+  </script>
+  <script type="module" src="./mainTest.js"></script>
+  <script class="mocha-exec">
+    mocha.run();
+  </script>
+</body>
+</html>
