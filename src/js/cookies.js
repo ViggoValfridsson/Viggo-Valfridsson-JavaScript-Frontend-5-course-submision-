@@ -10,9 +10,11 @@ export function setCookie(name, value, options = {}) {
     options.expires = options.expires.toUTCString();
   }
   
-  value = value.split(",");
-  value = Array.from(new Set(value));
-  value = value.toString();
+  if (name === "favoriteList") {
+    value = value.split(",");
+    value = Array.from(new Set(value));
+    value = value.toString();
+  }
 
   let cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
   
